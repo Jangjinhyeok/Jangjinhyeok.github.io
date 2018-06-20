@@ -3,6 +3,26 @@
 <html>
     <head>
         <meta charset = "UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script> 
+            $(document).ready(function(){
+                $("#flip-1").click(function(){
+                    $("#panel-1").slideToggle("slow");
+                });
+            });
+
+            $(document).ready(function(){
+                $("#flip-2").click(function(){
+                    $("#panel-2").slideToggle("slow");
+                });
+            });
+
+            $(document).ready(function(){
+                $("#flip-3").click(function(){
+                    $("#panel-3").slideToggle("slow");
+                });
+            });
+        </script>
         <style>
             * {
                 box-sizing : border-box;
@@ -147,6 +167,47 @@
                 
             }
 
+            .year-1 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+
+             #panel-1 {
+                display : none;
+            }
+
+            .year-2 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+            
+            #panel-2 {
+                display : none;
+            }
+
+            .year-3 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+            
+            #panel-3 {
+                display : none;
+            }
         </style>
     </head>
 
@@ -209,7 +270,9 @@
                         <a href = "http://company.netmarble.com/company/history#" target = "_blank">연혁 전체 보러가기</a>
                     </div>
                     <div class = "history">
-                        <dl>
+                        <div id = "flip-1">
+                        <div class = "year-1">2000~2012</div>
+                        <dl id = "panel-1">
                             <div class = "historycontent">
                                 <dt>2000.03</dt>
                                 <dd>㈜넷마블 설립</dd>
@@ -274,7 +337,12 @@
                                 <dt>2012.07</dt>
                                 <dd>대만법인 설립 (JoyBomb)</dd>
                             </div>
+                        </dl>
+                        </div>
 
+                        <div id = "flip-2">
+                        <div class = "year-2">2013~2015</div>
+                        <dl id = "panel-2">
                             <div class = "historycontent">
                                 <dt>2013.01</dt>
                                 <dd>중국법인 설립</dd>
@@ -344,7 +412,12 @@
                                 <dt>2015.12</dt>
                                 <dd>2015 일자리 창출 동탑산업훈장 수상 (넷마블게임즈 이사회 의장 방준혁님)</dd>
                             </div>
+                        </dl>
+                        </div>
 
+                        <div id = "flip-3">
+                        <div class = "year-3">2016~2017</div>
+                        <dl id = "panel-3">
                             <div class = "historycontent">
                                 <dt>2016.01</dt>
                                 <dd>세븐나이츠 G-Rank 시상식 '이달의 게임' 선정</dd>
@@ -440,6 +513,7 @@
                                 <dd>리니지2 레볼루션, 6개국서 구글플레이 ‘2017 올해의 베스트 게임’ 선정</dd>
                             </div>
                         </dl>
+                        </div>
                     </div>  
                 </div>
             </div>

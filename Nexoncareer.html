@@ -3,6 +3,26 @@
 <html>
     <head>
         <meta charset = "UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script> 
+            $(document).ready(function(){
+                $("#flip-1").click(function(){
+                    $("#panel-1").slideToggle("slow");
+                });
+            });
+
+            $(document).ready(function(){
+                $("#flip-2").click(function(){
+                    $("#panel-2").slideToggle("slow");
+                });
+            });
+
+            $(document).ready(function(){
+                $("#flip-3").click(function(){
+                    $("#panel-3").slideToggle("slow");
+                });
+            });
+        </script>
         <style>
             * {
                 box-sizing : border-box;
@@ -128,6 +148,47 @@
                 
             }
 
+            .year-1 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+
+            #panel-1 {
+                display : none;
+            }
+
+            .year-2 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+            
+            #panel-2 {
+                display : none;
+            }
+
+            .year-3 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+            
+            #panel-3 {
+                display : none;
+            }
         </style>
     </head>
 
@@ -183,7 +244,9 @@
                     <div><img src = "http://s.nx.com/s2/corporation/NXK/title/h4_1_1_10e.gif"></div>
 
                     <div class = "Award">
-                        <dl>
+                        <div id = "flip-1">
+                        <div class = "year-1">1997~2005</div>
+                        <dl id = "panel-1">
                             <div class = "Awardcontent">
                                 <dt>1997</dt>
                                 <dd>넥슨 - 정보통신부 지정 우수 신기술 보유 업체</dd>
@@ -249,7 +312,12 @@
                                 <dd>제라 - '2005 지스타 어워드' 베스트 콘텐츠 부문 수상</dd>
                                 <dd>마비노기 - 2005 ENET '최고 온라인게임' 선정</dd>
                             </div>
+                        </dl>
+                        </div>
 
+                        <div id = "flip-2">
+                        <div class = "year-2">2006~2010</div>
+                        <dl id = "panel-2">
                             <div class = "Awardcontent">
                                 <dt>2006</dt>
                                 <dd>넥슨 - '제1회 대한민국 인터넷 대상' 정보통신부 장관상 수상</dd>
@@ -309,7 +377,12 @@
                                 <dd>마비노기 영웅전 - '한국 국제 게임 컨퍼런스 어워드' 게임디자인 부문 대상 수상</dd>
                                 <dd>NXC - 김정주 대표이사, ‘대한민국 100대 기술 주역’으로 선정</dd>
                             </div>
+                        </dl>
+                        </div>
 
+                        <div id = "flip-3">
+                        <div class = "year-3">2011~2015</div>
+                        <dl id = "panel-3">
                             <div class = "Awardcontent">
                                 <dt>2011</dt>
                                 <dd>사이퍼즈 - ‘2011년 대한민국게임대상’ 최우수상 수상</dd>
@@ -354,6 +427,7 @@
                                 <dd>클로저스 - ‘2015 대한민국 게임대상’ 우수상(온라인 게임) 수상</dd>
                             </div>
                         </dl>
+                        </div>
                     </div>
                 </div>
             </div>

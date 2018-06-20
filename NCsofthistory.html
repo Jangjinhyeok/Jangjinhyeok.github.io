@@ -3,6 +3,26 @@
 <html>
     <head>
         <meta charset = "UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script> 
+            $(document).ready(function(){
+                $("#flip-1").click(function(){
+                    $("#panel-1").slideToggle("slow");
+                });
+            });
+
+            $(document).ready(function(){
+                $("#flip-2").click(function(){
+                    $("#panel-2").slideToggle("slow");
+                });
+            });
+
+            $(document).ready(function(){
+                $("#flip-3").click(function(){
+                    $("#panel-3").slideToggle("slow");
+                });
+            });
+        </script>
         <style>
             * {
                 box-sizing : border-box;
@@ -145,6 +165,48 @@
                 margin-bottom : 15px;
                 font-size : 20px;
             }
+
+            .year-1 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+
+             #panel-1 {
+                display : none;
+            }
+
+            .year-2 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+            
+            #panel-2 {
+                display : none;
+            }
+
+            .year-3 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+            
+            #panel-3 {
+                display : none;
+            }
         </style>
     </head>
 
@@ -210,7 +272,9 @@
                     </div>
 
                     <div class = "history">
-                        <dl>
+                        <div id = "flip-1">
+                        <div class = "year-1">1997~2003</div>    
+                        <dl id = "panel-1">
                             <div class = "historycontent">
                                 <dt>1997.03</dt>
                                 <dd>엔씨소프트 창립</dd>
@@ -240,7 +304,12 @@
                                 <dt>2003.10</dt>
                                 <dd>리니지2 서비스 개시</dd>
                             </div>
+                        </dl>
+                        </div>
 
+                        <div id = "flip-2">
+                        <div class = "year-2">2005~2013</div>
+                        <dl id = "panel-2">
                             <div class = "historycontent">
                                 <dt>2005.04</dt>
                                 <dd>길드워 상용서비스 개시</dd>
@@ -285,7 +354,12 @@
                                 <dt>2013.08</dt>
                                 <dd>판교 R&amp;D센터 완공</dd>
                             </div>
+                        </dl>
+                        </div>
 
+                        <div id = "flip-3">
+                        <div class = "year-3">2014~2017</div>
+                        <dl id = "panel-3">
                             <div class = "historycontent">
                                 <dt>2014.06</dt>
                                 <dd>와일드스타 북미/유럽 상용서비스 개시</dd>
@@ -321,6 +395,7 @@
                                 <dd>MXM 북미⁄유럽 출시</dd>
                             </div>
                         </dl>
+                        </div>
                     </div>
                 </div>
             </div>

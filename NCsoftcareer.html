@@ -3,6 +3,26 @@
 <html>
     <head>
         <meta charset = "UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script> 
+            $(document).ready(function(){
+                $("#flip-1").click(function(){
+                    $("#panel-1").slideToggle("slow");
+                });
+            });
+
+            $(document).ready(function(){
+                $("#flip-2").click(function(){
+                    $("#panel-2").slideToggle("slow");
+                });
+            });
+
+            $(document).ready(function(){
+                $("#flip-3").click(function(){
+                    $("#panel-3").slideToggle("slow");
+                });
+            });
+        </script>
         <style>
             * {
                 box-sizing : border-box;
@@ -133,6 +153,47 @@
                 
             }
 
+            .year-1 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+
+             #panel-1 {
+                display : none;
+            }
+
+            .year-2 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+            
+            #panel-2 {
+                display : none;
+            }
+
+            .year-3 {
+                margin-top : 30px;
+                margin-bottom : 30px;
+                text-align: center;
+                background-color : gray;
+                color : white;
+                font-size : 25px;
+                font-weight: bold;
+            }
+            
+            #panel-3 {
+                display : none;
+            }
         </style>
     </head>
 
@@ -194,7 +255,9 @@
                     </div>
 
                     <div class = "Award">
-                        <dl>
+                        <div id = "flip-1">
+                        <div class = "year-1">1998~2005</div>
+                        <dl id = "panel-1">
                             <div class = "Awardcontent">
                                 <dt>1998.12</dt>
                                 <dd>리니지 '98 대한민국 게임대상 대상 수상 (문화관광부)</dd>
@@ -262,7 +325,12 @@
                                 <dd>길드워 정보통신부 디지털컨텐츠 대상(대통령상) 수상</dd>
                                 <dd>리니지 수퍼브랜드 선정 (산업자원부)</dd>
                             </div>
+                        </dl>
+                        </div>
 
+                        <div id = "flip-2">
+                        <div class = "year-2">2006~2010</div>
+                        <dl id = "panel-2">
                             <div class = "Awardcontent">
                                 <dt>2006.12</dt>
                                 <dd>2006 대한민국 게임대상 사회공헌 우수기업상 수상</dd>
@@ -300,7 +368,12 @@
                                 <dt>2010.08</dt>
                                 <dd>길드워2, 유럽 게임쇼 게임스컴(Gamescom)에서 최고의 온라인게임상(Best award) 수상</dd>
                             </div>
+                        </dl>
+                        </div>
 
+                        <div id = "flip-3">
+                        <div class = "year-3">2011~2016</div>
+                        <dl id = "panel-3">
                             <div class = "Awardcontent">
                                 <dt>2011.08</dt>
                                 <dd>아이온, ‘아시아 온라인게임 어워드’ 대상 수상</dd>
@@ -352,6 +425,7 @@
                                 <dd>엔씨소프트문화재단 '나의 AAC' 휴먼테크놀로지어워드 2016 대상 수상</dd>
                             </div>
                         </dl>
+                        </div>
                     </div>
                 </div>
             </div>
