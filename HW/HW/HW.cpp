@@ -89,7 +89,7 @@ public:
 class Player : public GameObject {
 	char left_face[20] = "<<^_^))";
 	char right_face[20] = "((^_^>>";
-	bool left, right;
+	bool right;
 
 public:
 	
@@ -104,7 +104,6 @@ public:
 	{
 		
 		strncpy(getFace(), left_face, strlen(left_face));
-		left = true;
 		right = false;
 
 		if (getPosition() == 0)
@@ -118,7 +117,6 @@ public:
 	{
 		
 		strncpy(getFace(), right_face, strlen(right_face));
-		left = false;
 		right = true;
 
 		if (getPosition() == 110)
@@ -135,14 +133,14 @@ public:
 
 	void update()
 	{
-
+		
 	}
 
 };
 
 class Enemy : public GameObject {
 	int count;
-
+	
 public:
 	Enemy() {}
 	Enemy(int pos, const char* face, Screen* screen, int hp)
@@ -167,13 +165,12 @@ public:
 			
 	}
 
+	//적 이동속도 딜레이
 	int counting()
 	{
 		count++;
 		return count;
 	}
-
-	
 
 	void update(int player_pos)
 	{
@@ -190,7 +187,6 @@ public:
 class Bullet : public GameObject {
 	bool isFiring;
 	bool check;
-	Enemy enemy;
 
 public:
 	Bullet() {}
@@ -215,20 +211,29 @@ public:
 			setPosition(player_pos);
 	}
 
-	void update(int enemy_pos)
+	void update(int enemy_pos, Enemy* enemy)
 	{
 		if (isFiring == false) return;
 		int pos = getPosition();
 		
+		//오른쪽 방향이면 +
 		if (check == true) {
 			pos = pos + 1;
 		}
 
+		//아니면 -
 		else if (check == false) {
 			pos = pos - 1;
 		}
 		
-		if (pos > enemy_pos && pos < enemy_pos + 4)
+		//피격 판정
+		if (pos > enemy_pos && pos < enemy_pos + 4 && enemy->getHp() > 0)
+		{
+			isFiring = false;
+			pos = -1;
+		}
+
+		else if (pos == 0 || pos == 115)
 		{
 			isFiring = false;
 			pos = -1;
@@ -246,7 +251,6 @@ int main()
 	Bullet bullets[100];
 
 	int i = 0;
-	int j = 0;
 
 	for (int i = 0; i < max_bullets; i++)
 	{
@@ -295,17 +299,16 @@ int main()
 
 		for (int i = 0; i < max_bullets; i++)
 		{
-			bullets[i].update(enemy.getPosition());
+			bullets[i].update(enemy.getPosition(), &enemy);
 			if (enemy.getPosition() == bullets[i].getPosition())
 			{
 				enemy.decreaseHp();
-				bullets[i].decreaseHp();
 			}
 		}
 			
 		
 		screen.render();
-		Sleep(66);
+		Sleep(50);
 	}
 
 	return 0;
