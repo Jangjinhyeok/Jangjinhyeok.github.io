@@ -2,39 +2,38 @@
 #include <iostream>
 #include <conio.h>
 #include <Windows.h>
-
+#include <time.h>
 using namespace std;
 
 class Screen {
-	int size_x, size_y;
-	char* screen_x;
-	char* screen_y;
+	int size;
+	char* screen;
 
 public:
-	Screen(int sz_x, int sz_y) : size_x(sz_x),size_y(sz_y), screen_x(new char[sz_x + 1]) {}
-	~Screen() { delete[] screen_x; }
+	Screen(int sz) : size(sz), screen(new char[sz + 1]) {}
+	~Screen() { delete[] screen; }
 
 	void draw(int pos, const char* face)
 	{
 		if (face == nullptr) return;
-		if (pos < 0 || pos >= size_x) return;
-		strncpy(&screen_x[pos], face, strlen(face));
+		if (pos < 0 || pos >= size) return;
+		strncpy(&screen[pos], face, strlen(face));
 	}
 
 	void render()
 	{
-		printf("%s\r", screen_x);
+		printf("%s\r", screen);
 	}
 
 	void clear()
 	{
-		memset(screen_x, ' ', size_x);
-		screen_x[size_x] = '\0';
+		memset(screen, ' ', size);
+		screen[size] = '\0';
 	}
 
 	int length()
 	{
-		return size_x;
+		return size;
 	}
 
 };
@@ -43,10 +42,13 @@ class GameObject {
 	int pos;
 	char face[20];
 	Screen* screen;
+	int HP;
+	
 
 public:
-	GameObject(int pos, const char* face, Screen* screen)
-		: pos(pos), screen(screen)
+	GameObject(){}
+	GameObject(int pos, const char* face, Screen* screen, int hp)
+		: pos(pos), screen(screen), HP(hp)
 	{
 		strcpy(this->face, face);
 	}
@@ -56,33 +58,79 @@ public:
 	{
 		return pos;
 	}
+
 	void setPosition(int pos)
 	{
 		this->pos = pos;
 	}
+
+	char* getFace()
+	{
+		return face;
+	}
+
 	void draw()
 	{
-		screen->draw(pos, face);
+		if (HP > 0)
+			screen->draw(pos, face);
+	}
+
+	int getHp()
+	{
+		return HP;
+	}
+
+	void decreaseHp()
+	{
+		HP--;
 	}
 };
 
 class Player : public GameObject {
+	char left_face[20] = "<<^_^))";
+	char right_face[20] = "((^_^>>";
+	bool left, right;
 
 public:
-	Player(int pos, const char* face, Screen* screen)
-		: GameObject(pos, face, screen)
+	
+	Player() {}
+	Player(int pos, const char* face, Screen* screen, int hp)
+		: GameObject(pos, face, screen, hp)
 	{
+		
 	}
-
 
 	void moveLeft()
 	{
-		setPosition(getPosition() - 1);
+		
+		strncpy(getFace(), left_face, strlen(left_face));
+		left = true;
+		right = false;
+
+		if (getPosition() == 0)
+			setPosition(getPosition());
+
+		else
+			setPosition(getPosition() - 1);
 	}
 
 	void moveRight()
 	{
-		setPosition(getPosition() + 1);
+		
+		strncpy(getFace(), right_face, strlen(right_face));
+		left = false;
+		right = true;
+
+		if (getPosition() == 110)
+			setPosition(getPosition());
+
+		else
+			setPosition(getPosition() + 1);
+	}
+
+	bool getDirection()
+	{
+		return right;
 	}
 
 	void update()
@@ -93,41 +141,62 @@ public:
 };
 
 class Enemy : public GameObject {
+	int count;
 
 public:
-	Enemy(int pos, const char* face, Screen* screen)
-		: GameObject(pos, face, screen)
+	Enemy() {}
+	Enemy(int pos, const char* face, Screen* screen, int hp)
+		: GameObject(pos, face, screen, hp), count(0)
 	{
 	}
 
-	void moveRandom()
+	void move(int player_pos)
 	{
-		setPosition(getPosition() + rand() % 3 - 1);
+		if (getPosition() == 0 || getPosition() == 110)
+			setPosition(getPosition());
+
+		else if(getPosition() > player_pos)
+		{
+			setPosition(getPosition() - 1);
+		}
+
+		else if (getPosition() < player_pos)
+		{
+			setPosition(getPosition() + 1);
+		}
+			
 	}
 
-	void update()
+	int counting()
 	{
-		moveRandom();
+		count++;
+		return count;
+	}
+
+	
+
+	void update(int player_pos)
+	{
+		counting();
+		
+		if (count == 10)
+		{
+			move(player_pos);
+			count = 0;
+		}
 	}
 };
 
 class Bullet : public GameObject {
 	bool isFiring;
+	bool check;
+	Enemy enemy;
 
 public:
-	Bullet(int pos, const char* face, Screen* screen)
-		: GameObject(pos, face, screen), isFiring(false)
+	Bullet() {}
+	Bullet(int pos, const char* face, Screen* screen, int hp)
+		: GameObject(pos, face, screen, hp), isFiring(false), check(false)
 	{
-	}
-
-	void moveLeft()
-	{
-		setPosition(getPosition() - 1);
-	}
-
-	void moveRight()
-	{
-		setPosition(getPosition() + 1);
 	}
 
 	void draw()
@@ -136,24 +205,33 @@ public:
 		GameObject::draw();
 	}
 
-	void fire(int player_pos)
+	void fire(int player_pos, bool direction)
 	{
 		isFiring = true;
-		setPosition(player_pos);
+		check = direction;
+		if (check == true)
+			setPosition(player_pos + 5);
+		else if (check == false)
+			setPosition(player_pos);
 	}
 
 	void update(int enemy_pos)
 	{
 		if (isFiring == false) return;
 		int pos = getPosition();
-		if (pos < enemy_pos) {
+		
+		if (check == true) {
 			pos = pos + 1;
 		}
-		else if (pos > enemy_pos) {
+
+		else if (check == false) {
 			pos = pos - 1;
 		}
-		else {
+		
+		if (pos > enemy_pos && pos < enemy_pos + 4)
+		{
 			isFiring = false;
+			pos = -1;
 		}
 		setPosition(pos);
 	}
@@ -161,10 +239,19 @@ public:
 
 int main()
 {
-	Screen screen{ 80 , 80 };
-	Player player = { 30, "(^_^)", &screen };
-	Enemy enemy{ 60, "(*--*)", &screen };
-	Bullet bullet(-1, "+", &screen);
+	Screen screen{ 120 };
+	Player player{ 30, "<<^_^>>", &screen , 10};
+	Enemy enemy{ 100, "(*__*)", &screen, 5 };
+	const int max_bullets = 10;
+	Bullet bullets[100];
+
+	int i = 0;
+	int j = 0;
+
+	for (int i = 0; i < max_bullets; i++)
+	{
+		bullets[i] = { -1,"+",&screen,1 };
+	}
 
 	while (true)
 	{
@@ -177,22 +264,46 @@ int main()
 			case 'a':
 				player.moveLeft();
 				break;
+
 			case 'd':
 				player.moveRight();
 				break;
+
 			case ' ':
-				bullet.fire(player.getPosition());
+				i = 0;
+				for (i = 0; i < max_bullets; i++)
+				{
+					if (bullets[i].getPosition() == -1)
+						break;
+				}
+				if (i == max_bullets)
+					break;
+				bullets[i].fire(player.getPosition(), player.getDirection());
 				break;
 			}
 		}
+
+		//draw
 		player.draw();
 		enemy.draw();
-		bullet.draw();
-
+		for (int i = 0; i < max_bullets; i++)
+			bullets[i].draw();
+		
+		//update
 		player.update();
-		enemy.update();
-		bullet.update(enemy.getPosition());
+		enemy.update(player.getPosition());
 
+		for (int i = 0; i < max_bullets; i++)
+		{
+			bullets[i].update(enemy.getPosition());
+			if (enemy.getPosition() == bullets[i].getPosition())
+			{
+				enemy.decreaseHp();
+				bullets[i].decreaseHp();
+			}
+		}
+			
+		
 		screen.render();
 		Sleep(66);
 	}
