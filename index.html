@@ -1,0 +1,847 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>장진혁 경력기술서</title>
+<meta name="description" content="게임 클라이언트 프로그래머 장진혁의 경력기술서 (Unreal / Unity)">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<aside class="toc" aria-label="목차">
+  <p class="toc-title">목차</p>
+  <ol>
+    <li><a href="#summary">핵심 역량</a></li>
+    <li><a href="#synthoria">Synthoria</a>
+      <ol>
+        <li><a href="#s1">미니골프 리팩토링</a></li>
+        <li><a href="#s2">외부 지갑 연동</a></li>
+        <li><a href="#s3">상호작용 범용화</a></li>
+        <li><a href="#s4">상점 전환·최적화</a></li>
+      </ol>
+    </li>
+    <li><a href="#asanmoa">아산모아 메타버스</a>
+      <ol>
+        <li><a href="#a1">Fork-and-Trim 마이그레이션</a></li>
+        <li><a href="#a2">신규 백엔드 이관</a></li>
+        <li><a href="#a3">서버 권위형 퀘스트</a></li>
+        <li><a href="#a4">자동화 테스트·에디터 도구</a></li>
+        <li><a href="#a5">빌드/배포 자동화</a></li>
+        <li><a href="#a6">크로스플랫폼 크래시</a></li>
+        <li><a href="#a7">웹뷰 미디어 권한</a></li>
+        <li><a href="#a8">월드 진입/전환</a></li>
+        <li><a href="#a9">보물찾기 상태 경합</a></li>
+        <li><a href="#a10">랭킹 응답 처리</a></li>
+        <li><a href="#a11">관광 지도</a></li>
+        <li><a href="#a12">기타</a></li>
+      </ol>
+    </li>
+    <li><a href="#rollingseed">RollingSeed</a>
+      <ol>
+        <li><a href="#r1">레거시 → 리마스터 이식</a></li>
+        <li><a href="#r2">공통 라운드 프레임워크</a></li>
+        <li><a href="#r3">게임 규칙 구현</a></li>
+        <li><a href="#r4">다국어 조회 버그</a></li>
+        <li><a href="#r5">사운드 등록 자동화</a></li>
+      </ol>
+    </li>
+    <li><a href="#workstyle">작업 방식</a></li>
+  </ol>
+</aside>
+
+<main>
+
+<header class="hero">
+  <p class="eyebrow">경력기술서</p>
+  <h1>장진혁</h1>
+  <p class="role">게임 클라이언트 프로그래머 · Unreal / Unity</p>
+  <p class="contact">
+    <a href="mailto:zero9936@gmail.com">zero9936@gmail.com</a>
+    <span aria-hidden="true">·</span>
+    <a href="https://github.com/Jangjinhyeok">github.com/Jangjinhyeok</a>
+    <span aria-hidden="true">·</span>
+    <a href="https://drive.google.com/file/d/17JJFBNAEJHLfHY7qsOgjl_QebOcX6-wx/view?usp=sharing">포트폴리오 PDF</a>
+  </p>
+</header>
+
+<section id="summary" class="block">
+  <h2>핵심 역량</h2>
+  <div class="metrics">
+    <div class="metric"><strong>540ms</strong><span>상점 오픈 프레임 스파이크를 비동기 프리로딩으로 해소</span></div>
+    <div class="metric"><strong>4 / 5</strong><span>라이브 코드베이스 포크 마이그레이션 게이트 완료</span></div>
+    <div class="metric"><strong>0 → 49</strong><span>승계 코드베이스에 도입한 자동화 테스트 정의</span></div>
+    <div class="metric"><strong>6종</strong><span>Unity 미니게임 리마스터 이식, 4개월 1인 전담</span></div>
+  </div>
+  <ul class="summary-list">
+    <li>UE 5.6 라이브 서비스 메타버스 <b>Synthoria</b>에서 미니게임·외부 지갑 연동·상점 기능을 개발하고, 상호작용·상점 시스템의 레거시 구조를 개선했습니다.</li>
+    <li>같은 회사 신규 프로젝트 <b>아산모아 메타버스</b>에서 라이브 코드베이스를 포크하는 마이그레이션을 클라이언트 단독으로 리드하고, 신규 백엔드 이관·서버 권위형 퀘스트 전환·자동화 테스트 도입·Android/iOS 배포 파이프라인까지 담당하고 있습니다.</li>
+    <li>Unity 기반 교육용 미니게임 모음집 <b>RollingSeed</b>에서 기획서 없이 레거시를 직접 플레이·분석해 미니게임 6종을 리마스터 프레임워크로 이식했습니다.</li>
+    <li>Unreal Insights로 병목을 계측해 원인을 좁히고, 소프트 레퍼런스와 비동기 로딩으로 게임 스레드 블로킹을 제거한 경험이 있습니다.</li>
+    <li>Editor Utility Widget·Python(Unreal), EditorWindow(Unity), Commandlet으로 반복 작업을 도구화해 왔습니다.</li>
+  </ul>
+</section>
+
+<!-- ============================ SYNTHORIA ============================ -->
+<section id="synthoria" class="project">
+  <div class="project-head">
+    <p class="eyebrow">01 · 주식회사 셔블</p>
+    <h2>Synthoria <small>라이브 서비스 메타버스 플랫폼</small></h2>
+    <dl class="facts">
+      <div><dt>기간</dt><dd>2025.12 ~ 재직 중</dd></div>
+      <div><dt>역할</dt><dd>게임 클라이언트 프로그래머 (정직원)</dd></div>
+      <div><dt>기술</dt><dd>UE 5.6 (커스텀 빌드) · C++ · Blueprint</dd></div>
+    </dl>
+    <p class="note">라이브 서비스 대상 변경은 모두 feature 브랜치에서 진행하고, 영향 범위·테스트 포인트를 문서화한 뒤 반영했습니다.</p>
+  </div>
+
+  <article id="s1" class="item">
+    <h3>미니골프 미니게임 리팩토링 및 완성</h3>
+    <p class="lead">외주 인수작을 설계 문서 없이 2주 만에 리팩토링·재구현·자동화까지 1인으로 완결했습니다.</p>
+    <ul class="chips"><li>2026.01.21 ~ 02.03</li><li>1인 단독</li><li>C++</li><li>Blueprint</li><li>Python</li><li>Enhanced Input</li><li>Editor Utility Widget</li><li>DataTable</li></ul>
+
+    <div class="grid2">
+      <div>
+        <h4>배경</h4>
+        <ul>
+          <li>외주로 제작이 끝난 상태로 인계받았으나, 외주사가 Unity 기반 개발사라 스테이지 오브젝트를 동적 생성 대신 Actor Component로 일일이 고정 배치하는 등 Unity 스타일 구조가 그대로 이식돼 있었습니다.</li>
+          <li>설계 문서가 없어 코드와 실제 인게임 플레이만으로 구조와 동작 규칙을 파악했습니다.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>리팩토링 및 재구현</h4>
+        <ul>
+          <li>Stage Blueprint에 Child Actor Component로 고정돼 있던 오브젝트 배치를 DataTable 기반 스폰 구조로 전환하고, 하드코딩된 좌표·회전값과 타입 오류를 정리했습니다.</li>
+          <li>GameMode 상태 흐름 재설계, 물리 기반 조작, UI, 18개 스테이지 정리까지 단독 수행했습니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <figure>
+      <script type="text/x-mermaid">
+flowchart LR
+  SB["Stage Blueprint × 18<br/>Coin · Gimmick을<br/>Child Actor로 고정 배치"] -- "위치 수집" --> PY["EUW + Python<br/>Transform 순회 추출"]
+  PY --> CSV["StageData CSV"]
+  CSV -- "Reimport" --> DT["Stage DataTable"]
+  DT --> GM["GameMode<br/>Coin · Gimmick 런타임 스폰"]
+      </script>
+      <figcaption>스테이지 데이터 파이프라인 — 신규 스테이지는 Blueprint 수정 없이 CSV 행 추가로 끝나도록 바꿨습니다.</figcaption>
+    </figure>
+
+    <div class="grid2">
+      <div>
+        <h4>파이프라인 자동화</h4>
+        <ul>
+          <li>Editor Utility Widget과 Python 스크립트로 Stage Blueprint 안 Coin·Gimmick의 Transform을 순회해 CSV로 추출했습니다.</li>
+          <li>CSV Reimport 기반 DataTable 갱신 흐름을 만들어 18개 스테이지의 반복 수동 작업을 줄였습니다.</li>
+        </ul>
+        <h4>모바일 UX</h4>
+        <ul>
+          <li>Enhanced Input 기반 3축 제어(회전 / 각도 / 파워)를 구현했습니다.</li>
+          <li>AddImpulse 기반 물리 샷과 궤적 시각화(Prediction Line)를 구현했습니다.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>아키텍처</h4>
+        <ul>
+          <li>StageData(스테이지 메타), ScoreParData(스코어 기준), ResultWordData(결과 문구) 등 Data-Driven으로 설계했습니다.</li>
+          <li><code>TWeakObjectPtr</code> + Delegate Unbind 패턴으로 메모리 안전성을 확보하고 ensure 경고를 제거했습니다.</li>
+        </ul>
+        <h4>콘텐츠</h4>
+        <ul><li>Fade, 카메라 연출, 사운드, GoalZone/FailZone 배치 등 폴리싱까지 수행했습니다.</li></ul>
+      </div>
+    </div>
+  </article>
+
+  <article id="s2" class="item">
+    <h3>외부 블록체인 지갑 연동 <span class="tag tag-muted">구현 후 제거됨</span></h3>
+    <p class="lead">외부 지갑 플러그인을 사내 엔진에 포팅하고 PC·모바일 이중 연결 구조로 구현했으나, 서비스 방침이 웹 기반으로 바뀌며 네이티브 구현은 제거됐습니다.</p>
+    <ul class="chips"><li>2026.03.09 ~ 04.03</li><li>기술 검토 · 설계 · 구현</li><li>C++</li><li>GameInstanceSubsystem</li><li>REST</li><li>WalletConnect</li></ul>
+    <ul>
+      <li>내장 SDK가 외부 지갑 연동을 지원하지 않아 연동 방식 3가지를 비교한 뒤 WalletConnect 기반 외부 플러그인 도입을 결정했습니다.</li>
+      <li>UE 5.5용 플러그인을 사내 5.6 엔진에서 빌드되도록 포팅하고, Mac 제외·iOS 임시 비활성화 등 플랫폼별로 빌드를 격리했습니다.</li>
+      <li>플러그인이 제공하는 Actor를 GameInstanceSubsystem이 소유하도록 감싸 수명과 UI 결합을 분리하고, PC는 QR 코드, 모바일은 딥링크로 연결되게 했습니다.</li>
+      <li>연결 결과를 기존 인증 REST API로 등록하고, 자산 등급 조회와 연동 팝업 UI까지 구현했습니다.</li>
+    </ul>
+    <figure>
+      <script type="text/x-mermaid">
+sequenceDiagram
+  autonumber
+  actor U as 사용자
+  participant UI as 지갑 연결 팝업
+  participant S as 지갑 연결 Subsystem
+  participant P as 외부 지갑 플러그인
+  participant W as 지갑 앱
+  participant API as 게임 웹 API
+  U->>UI: 지갑 연결
+  UI->>S: 연결 요청
+  S->>P: 플러그인 Actor 생성 · 세션 시작
+  alt PC
+    P-->>S: QR 텍스처
+    S-->>UI: QR 표시 (델리게이트)
+    U->>W: 휴대폰으로 QR 스캔
+  else 모바일
+    S->>W: 딥링크로 지갑 앱 실행
+    W-->>S: 앱 복귀 후 세션 대기 재개
+  end
+  W-->>P: 사용자 승인
+  P-->>S: 지갑 주소
+  S->>API: 지갑 등록
+  API-->>S: 결과
+  S-->>UI: 연결 결과 (델리게이트)
+      </script>
+      <figcaption>PC(QR)·모바일(딥링크) 이중 연결 흐름. 플러그인 수명은 Subsystem이 관리하고 UI와는 델리게이트로만 연결했습니다.</figcaption>
+    </figure>
+  </article>
+
+  <article id="s3" class="item">
+    <h3>상호작용 시스템 범용화 리팩토링</h3>
+    <p class="lead">의자 이름 문자열로 식별하고 의자 Actor 하나가 모든 처리를 맡던 라이브 구조를, Actor 단위 정수 ObjectId 기반 범용 구조로 설계·전환했습니다.</p>
+    <ul class="chips"><li>2026.03 ~ 04</li><li>분석 · 설계 · C++ 리팩토링 · 에디터 도구 · 서버 협의</li><li>UWorldSubsystem</li><li>DataTable + CSV</li><li>Editor Utility Widget</li></ul>
+
+    <div class="pd">
+      <div><h4>문제</h4><p>라이브 구조는 의자 Actor 하나가 클릭·패킷·위젯·좌석을 모두 처리하고, 서버에는 의자 이름 문자열을 보냈습니다. 서버가 대상을 검증할 기준이 없었고, 상호작용 타입이 늘 때마다 전용 서브시스템이 하나씩 생기는 구조였습니다.</p></div>
+      <div><h4>판단</h4><p>오브젝트 등록 방식을 3가지로 비교했습니다. A안(각 Action이 서버 서브시스템에 직접 등록)은 서버 서브시스템의 책임이 과중해지고, C안(Multicast 델리게이트)은 이벤트마다 전체를 순회합니다. 그래서 B안(범용 서브시스템이 ObjectId로 조회)을 택했습니다.</p></div>
+    </div>
+
+    <div class="grid2 figs">
+      <figure>
+        <script type="text/x-mermaid">
+flowchart TB
+  B["상호작용 Actor 베이스"] --> W["위젯 상호작용 Actor<br/>위젯 버튼 클릭"]
+  W --> C["의자 Actor<br/>클릭 · 패킷 · 위젯 · 좌석 전부 담당<br/>의자 이름 문자열로 식별"]
+  C -- "이름 문자열로 요청" --> S["서버 통신 서브시스템<br/>의자 전용 패킷 송수신"]
+        </script>
+        <figcaption>Before — 의자 전용 단일 상속 구조</figcaption>
+      </figure>
+      <figure>
+        <script type="text/x-mermaid">
+classDiagram
+  direction TB
+  class InteractionSubsystem {
+    UWorldSubsystem
+    ObjectId → Component 약참조 맵
+    레벨 로드 시 자동 스캔
+  }
+  class InteractionComponent {
+    ObjectId
+    InteractionType
+    Actions[]
+  }
+  class InteractionAction {
+    ExecuteAction()
+  }
+  class SitAction
+  class OpenStoreAction
+  InteractionSubsystem --> InteractionComponent : ObjectId로 조회
+  InteractionComponent *-- InteractionAction
+  InteractionAction <|-- SitAction
+  InteractionAction <|-- OpenStoreAction
+        </script>
+        <figcaption>After — 범용 서브시스템 + Component·Action 계층</figcaption>
+      </figure>
+    </div>
+
+    <h4>구현</h4>
+    <ul>
+      <li>상호작용 오브젝트 DataTable 행을 설계했습니다(ObjectId · LevelType · InteractionType · ObjectLocation · 레벨 인스턴스 여부 · WorldType · SeatCount). 이 테이블을 CSV로 추출해 <b>클라이언트와 서버가 같은 데이터로 검증</b>하게 했습니다.</li>
+      <li>InteractionSubsystem은 <code>TMap&lt;uint32, TWeakObjectPtr&lt;UInteractionComponent&gt;&gt;</code>로 ObjectId를 매핑하고, 레벨 로드 시 <code>TActorIterator</code>로 자동 스캔·등록합니다.</li>
+      <li>좌석 단위 점유와 가장 가까운 빈 좌석 배정, 영역을 벗어나면 자동으로 일어서기를 구현하고, 상점 NPC까지 같은 구조로 확장했습니다.</li>
+      <li>의자·상점 NPC 전용 패킷을 ObjectId · 상호작용 타입 · 동작 타입 · 동작 데이터로 구성된 <b>범용 상호작용 패킷</b> 하나로 통합했습니다.</li>
+      <li>레벨과 레벨 인스턴스의 상호작용 Actor를 스캔해 ObjectId를 순차 부여하고 DataTable에 등록(같은 행은 갱신)하는 에디터 도구를 만들었습니다. C++ 지원 함수 10종과 EUW로 구성했고, 기존 의자 ID 전용 도구 4종은 정리했습니다.</li>
+      <li>패킷 변경 사항과 서버 계획서, 흐름 비교 문서를 작성해 서버 개발자와 에러 코드·동작 타입·브로드캐스트 범위를 협의했습니다.</li>
+    </ul>
+
+    <figure>
+      <script type="text/x-mermaid">
+flowchart LR
+  L["레벨 / 레벨 인스턴스의<br/>상호작용 Actor"] -- "에디터 도구 스캔 · ObjectId 부여" --> DT["상호작용 DataTable"]
+  DT -- "CSV 추출" --> CSV["상호작용 오브젝트 CSV"]
+  CSV -- "서버 로드" --> SV["게임 서버<br/>ObjectId 검증"]
+  DT --> RT["런타임 Component의 ObjectId"]
+  RT -- "범용 상호작용 요청" --> SV
+      </script>
+      <figcaption>하나의 데이터를 클라이언트와 서버가 공유하는 구조</figcaption>
+    </figure>
+
+    <table>
+      <thead><tr><th>단계</th><th>요청 패킷의 대상 식별</th><th>의미</th></tr></thead>
+      <tbody>
+        <tr><td>라이브 기존</td><td>의자 이름 문자열</td><td>서버가 대상을 검증할 수 없음</td></tr>
+        <tr><td>ObjectId 전환</td><td>정수 ObjectId + 동작 타입</td><td>Actor 단위 식별</td></tr>
+        <tr><td>좌석 단위 점유</td><td>ObjectId + 좌석 번호 + 동작 타입</td><td>다인 좌석 지원</td></tr>
+        <tr><td><b>범용 통합</b></td><td>ObjectId + 상호작용 타입 + 동작 타입 + 동작 데이터</td><td>의자·상점 NPC 등 공용</td></tr>
+      </tbody>
+    </table>
+  </article>
+
+  <article id="s4" class="item">
+    <h3>상점 시스템 게임서버 전환 및 프레임드랍 최적화</h3>
+    <p class="lead">상점 통신을 REST에서 게임서버 TCP 패킷으로 전환하고, 전환 후 발견한 약 540ms 프레임 스파이크를 Unreal Insights로 추적해 비동기 프리로딩으로 해소했습니다.</p>
+    <ul class="chips"><li>2026.04</li><li>프로토콜 재설계 · 패킷 파싱 · 트러블슈팅 · 프로파일링</li><li>TCP 바이너리 프로토콜</li><li>Unreal Insights</li><li>StreamableManager</li><li>TSoftClassPtr</li></ul>
+
+    <h4>REST → 게임서버 TCP 패킷 전환</h4>
+    <ul>
+      <li>상호작용 리팩토링을 마친 뒤 상점만 HTTP REST로 남아 있던 것을 정리 대상으로 제안하고, 범용 상호작용 패킷과 상점 아이템 목록 패킷으로 전환했습니다.</li>
+      <li>아이템 최대치를 4,680개로 산정해 고정 크기 배열(50슬롯)을 나눠 받는 안을 탈락시키고, 길이 헤더 기반 <b>가변 길이 단일 패킷</b>으로 서버 개발자와 사양을 확정했습니다. 수신 측은 Flexible Array로 파싱하고, 헤더의 패킷 크기와 <code>2 + 아이템 수 × 항목 크기</code>가 일치하는지 검증합니다.</li>
+      <li>패킷 도착 순서가 바뀌어도 열리도록 상점 오픈 조건을 양쪽에서 검사하게 했습니다.</li>
+      <li>상점 UI가 뜨지 않던 문제 3건을 순서대로 해결했습니다.
+        <ol>
+          <li>위젯 생성 전 데이터 주입 → 받은 데이터를 보관했다가 생성 시 빌드하는 Pending 패턴</li>
+          <li>Blueprint가 델리게이트를 바인딩하기 전 Broadcast → 다음 틱으로 지연</li>
+          <li>BlueprintImplementableEvent 시그니처 변경으로 무효화된 Blueprint 이벤트 → C++ 경로로 이관</li>
+        </ol>
+      </li>
+      <li>구매 성공 델리게이트를 통화 갱신에서 분리해, 퀘스트 보상 등 상점 밖의 잔액 변동과 섞이지 않게 했습니다.</li>
+    </ul>
+
+    <figure>
+      <script type="text/x-mermaid">
+flowchart TB
+  subgraph Old["Before · 고정 50슬롯, 분할 송신"]
+    direction LR
+    O1["헤더"] --> O2["전체 개수"] --> O3["이번 개수"] --> O4["아이템 50칸<br/>(빈 칸 포함 고정 크기)"]
+  end
+  subgraph New["After · 가변 길이 단일 패킷"]
+    direction LR
+    N1["헤더 (패킷 크기)"] --> N2["아이템 수"] --> N3["아이템 × N"]
+  end
+  Old -- "50개 초과 시 여러 패킷 → 클라이언트 재조립" --> New
+  New -. "검증: 패킷 크기 = 2 + N × 항목 크기" .-> V["안전한 파싱"]
+      </script>
+      <figcaption>상점 아이템 목록 패킷 구조 비교</figcaption>
+    </figure>
+
+    <h4>Unreal Insights 기반 프레임드랍 최적화</h4>
+    <div class="pd">
+      <div><h4>문제</h4><p>상점을 처음 열 때 약 540ms 프레임 스파이크(1.9fps)가 발생했습니다. Insights 기준 해당 프레임 541ms 중 동기 에셋 로딩이 540ms였습니다.</p></div>
+      <div><h4>원인 (2계층)</h4><p>① 아이템 정의 조회가 메모리에 없는 Definition Blueprint를 게임 스레드에서 <b>동기 로딩</b>했습니다. ② 탈것 Definition이 스폰 Actor 클래스를 <code>TSubclassOf&lt;AActor&gt;</code> 하드 레퍼런스로 들고 있어 탈것 Blueprint·메시·머티리얼까지 <b>연쇄 로딩</b>됐습니다.</p></div>
+    </div>
+
+    <div class="stack">
+      <figure>
+        <script type="text/x-mermaid">
+sequenceDiagram
+  participant Net as 게임서버
+  participant Act as 상점 오픈 처리
+  participant IM as 아이템 정의 관리자
+  participant AM as 에셋 로딩 (게임 스레드)
+  participant UI as 상점 UI
+  Net->>Act: 아이템 목록 (N개)
+  loop 아이템 N개
+    Act->>IM: 아이템 정의 조회
+    IM->>AM: 메모리에 없으면 동기 로딩
+    Note over AM: 하드 레퍼런스로<br/>탈것 에셋까지 연쇄 로딩
+  end
+  Act->>UI: 상점 열기
+  Note over Net,UI: 첫 오픈 프레임 약 540ms
+        </script>
+        <figcaption>Before — 동기 로딩으로 게임 스레드 블로킹</figcaption>
+      </figure>
+      <figure>
+        <script type="text/x-mermaid">
+sequenceDiagram
+  participant Net as 게임서버
+  participant Act as 상점 오픈 처리
+  participant IM as 아이템 정의 관리자
+  participant SM as StreamableManager
+  participant UI as 상점 UI
+  Net->>Act: 아이템 목록 (N개)
+  Act->>IM: Definition 경로만 조회
+  Act->>SM: RequestAsyncLoad(Definition)
+  Note over Act: 게임 스레드 즉시 반환
+  SM-->>Act: Definition 로딩 완료 콜백
+  Act->>IM: 아이템 정의 조회 (캐시 히트)
+  Act->>SM: RequestAsyncLoad(썸네일)
+  SM-->>Act: 썸네일 완료
+  Act->>UI: 상점 열기
+  Note over Act: 재클릭 시 이전 프리로딩 핸들 Reset
+        </script>
+        <figcaption>After — 2단계 비동기 프리로딩과 콜백 체인</figcaption>
+      </figure>
+    </div>
+
+    <ol class="timeline">
+      <li><span>1차</span>썸네일만 비동기 프리로딩 → 효과 미미. 병목이 텍스처가 아니라 Definition임을 확인</li>
+      <li><span>2차</span>프리로딩 완료를 기다린 뒤 UI 오픈 → 부분 개선. Insights로 진짜 병목(Definition 동기 로딩) 확정</li>
+      <li><span>3차</span><code>RequestAsyncLoad</code> 기반 Definition → 썸네일 2단계 비동기 프리로딩 + 콜백 체인</li>
+      <li><span>후속</span>스폰 Actor 참조를 <code>TSubclassOf&lt;AActor&gt;</code> → <code>TSoftClassPtr&lt;AActor&gt;</code>로 바꾸고, 탈것 Definition Blueprint 29개를 재저장해 연쇄 로딩을 끊음. Reference Viewer로 소프트 레퍼런스 전환 확인</li>
+    </ol>
+    <p class="result">결과: 상점 오픈 시 540ms 스파이크를 해소했습니다. 장착 시점의 클래스 해석은 실제 사용 시점이라 의도적으로 동기 처리를 남겼습니다.</p>
+  </article>
+</section>
+
+<!-- ============================ ASANMOA ============================ -->
+<section id="asanmoa" class="project">
+  <div class="project-head">
+    <p class="eyebrow">02 · 주식회사 셔블</p>
+    <h2>아산모아 메타버스 <small>라이브 코드베이스 포크로 출범한 신규 메타버스 플랫폼</small></h2>
+    <dl class="facts">
+      <div><dt>기간</dt><dd>2026.06 ~ 재직 중 (Synthoria와 병행)</dd></div>
+      <div><dt>역할</dt><dd>클라이언트 개발 단독 전담 (아트·서버 별도, 패킷 정의는 서버 담당자와 협업)</dd></div>
+      <div><dt>기술</dt><dd>UE 5.6 · C++ · Blueprint · Jenkins · UE Automation</dd></div>
+    </dl>
+  </div>
+
+  <article id="a1" class="item">
+    <h3>프로젝트 마이그레이션 리드 (Fork-and-Trim)</h3>
+    <p class="lead">라이브 서비스 코드베이스를 통째 복제한 뒤 안전한 항목만 점진적으로 제거하는 방식을 설계하고, 5개 게이트 중 4개를 완료했습니다.</p>
+    <ul class="chips"><li>2026.06 ~</li><li>전략 설계 · 게이트 관리 · 안전 트리밍</li><li>Android 내부 테스트 · iOS TestFlight 배포 도달</li></ul>
+    <ul>
+      <li>"새로 짜기" 대신 이미 컴파일되는 라이브 코드에서 출발해 초기 포팅 리스크를 없애는 방식을 택했습니다.</li>
+      <li>시딩 → 리브랜딩 → 서버·매크로 재정의 → 안전 트리밍 → 패키징의 5단계 게이트를 세우고 순서대로 진행했습니다. 남은 1개는 리브랜딩 아트(아이콘·스플래시) 교체입니다.</li>
+      <li>삭제 대상의 참조를 4계층(필수 BP → 기능 BP → 맵 → 대형 아트)으로 나눠 추적했습니다. C++를 먼저 삭제하고 컴파일을 확인한 뒤 에디터에서 잔존 Blueprint를 정리하는 2단계 절차로 미니게임·게임센터·영상 플레이어·인앱 결제 코드를 제거했습니다.</li>
+      <li>승계된 기술부채는 즉시 지우지 않고 백로그로 추적했습니다. 삭제 후보로 분류했던 기능을 기획 스펙과 대조해 유지로 정정한 사례도 있습니다.</li>
+    </ul>
+    <table class="gates">
+      <thead><tr><th>게이트</th><th>내용</th><th>기간</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr><td>G0 시딩</td><td>라이브 코드베이스 포크 · 빌드 확인</td><td>06.09</td><td><span class="st done">완료</span></td></tr>
+        <tr><td>G1 리브랜딩</td><td>앱 정체성 · 패키지명 · 표시명 · 산출물 이름 통일</td><td>06.10 ~ 09.15</td><td><span class="st wait">아트 대기</span></td></tr>
+        <tr><td>G2 서버·매크로 재정의</td><td>서버 대상 매크로 · URL 교체 · Mock 라우팅 토대</td><td>06.10 ~ 06.30</td><td><span class="st done">완료</span></td></tr>
+        <tr><td>G3 안전 트리밍</td><td>cook 제외 · 미사용 기능 제거 · 인앱 결제 코드 · 결제 SDK 제외</td><td>06.10 ~ 09.17</td><td><span class="st done">완료</span></td></tr>
+        <tr><td>G4 패키징</td><td>Android 서명 · 내부 테스트 / iOS 서명 전환 · TestFlight</td><td>06.11 ~ 09.29</td><td><span class="st done">완료</span></td></tr>
+      </tbody>
+    </table>
+    <p class="caption">G1은 설정까지 끝내고 아이콘·스플래시 아트 수령을 기다리는 중입니다. 기간은 커밋 기준입니다.</p>
+    <figure>
+      <script type="text/x-mermaid">
+flowchart LR
+  subgraph Tier["삭제 대상 참조 4계층"]
+    direction TB
+    T1["1 필수<br/>삭제된 C++의 자식 위젯 BP"] --> T2["2 기능 BP<br/>게임모드 · 게임플레이 BP"]
+    T2 --> T3["3 맵<br/>+ cook 목록 설정"]
+    T3 --> T4["4 대형 아트<br/>메시 · 머티리얼 · 텍스처"]
+  end
+  subgraph Proc["2단계 삭제 절차"]
+    direction TB
+    P1["C++ 클래스 삭제"] --> P2{"외부 참조 0?<br/>컴파일 통과?"}
+    P2 -- 예 --> P3["Reference Viewer로<br/>1~3계층 역참조 점검"]
+    P2 -- 아니오 --> P0["백로그로 보류"]
+    P3 --> P4["잔존 BP 삭제 + 설정 정리"]
+    P4 --> P5["빌드 + cook으로 정합 확인"]
+  end
+      </script>
+      <figcaption>안전 트리밍 절차</figcaption>
+    </figure>
+  </article>
+
+  <article id="a2" class="item">
+    <h3>신규 백엔드 이관 — 로그인·버전/점검·우편·이벤트</h3>
+    <p class="lead">백엔드 교체에 맞춰 서비스 로그인을 ID/비밀번호와 회원가입 흐름으로 전환하고, 맞지 않는 계약은 억지로 끼우지 않고 경계를 명시했습니다.</p>
+    <ul class="chips"><li>2026.08 ~ 10</li><li>REST 계약 이관</li><li>계약 테스트</li><li>실서버 검증</li></ul>
+    <div class="pd">
+      <div><h4>문제</h4><p>신규 백엔드의 계정 식별자는 UUID 문자열인데 기존 게임 입장은 숫자 계정 ID를 썼습니다. 사용자 재화 조회 API는 퇴역했고, 우편 ID는 64비트 정수로 바뀌었습니다.</p></div>
+      <div><h4>판단</h4><p>UUID를 숫자 ID로 임의 매핑하지 않았습니다. 표준 36자 형식만 허용하고 검증에 실패하면 버퍼를 전부 초기화하며, 검증을 통과해야만 토큰을 저장합니다. 게임 입장 패킷 변경은 서버 생성물이 확정본이라 서버팀에 제안서로 전달했습니다.</p></div>
+    </div>
+    <ul>
+      <li>이관 전에 기존 코드가 쓰는 웹 API 43개의 실사용 여부를 먼저 감사했습니다.</li>
+      <li>ID/비밀번호 로그인·가입 위젯, 버전 체크·점검 상태, 64비트 우편 ID, 이벤트·뉴스·알림 API를 이관하고 계약 테스트를 작성했습니다.</li>
+      <li>실서버에서 회원가입부터 로그인까지 전 과정과 우편·이벤트 API 동작을 검증했습니다.</li>
+    </ul>
+    <figure>
+      <script type="text/x-mermaid">
+sequenceDiagram
+  participant C as 클라이언트
+  participant W as 신규 백엔드 REST
+  participant G as 게임 서버
+  C->>W: 로그인 (ID / 비밀번호)
+  W-->>C: 토큰 + 계정 UUID + 캐릭터 데이터
+  C->>C: UUID 형식 검증 (실패 시 버퍼 초기화, 토큰 저장 안 함)
+  C->>C: 캐릭터 유무로 입장 / 커스터마이징 분기
+  C->>G: 입장 요청
+  G-->>C: 입장 응답
+      </script>
+      <figcaption>현재 정식 로그인 경로</figcaption>
+    </figure>
+  </article>
+
+  <article id="a3" class="item">
+    <h3>서버 권위형 퀘스트 전환과 TCP 부분 수신 결함 수정</h3>
+    <p class="lead">클라이언트가 판정하던 퀘스트를 서버 권위형 조회 구조로 바꾸면서, 검토 중 발견한 non-blocking 소켓 부분 수신 결함을 함께 고쳤습니다.</p>
+    <ul class="chips"><li>2026.09 ~ 10</li><li>2단계 전환</li><li>TCP 수신 계층</li><li>회귀 테스트</li></ul>
+    <div class="pd">
+      <div><h4>문제</h4><p>수신 워커가 non-blocking 소켓에서 "아직 데이터 없음"과 "연결 종료"를 구분하지 않아, 큰 패킷이 나뉘어 도착하면 스트림이 어긋날 수 있었습니다. 새 퀘스트 응답이 당시 가장 큰 패킷이라 실제로 이 결함을 건드릴 수 있었습니다.</p></div>
+      <div><h4>판단</h4><p>기존 흐름을 건드리지 않고 새 송수신·데이터 모델만 먼저 추가하고(서버의 열 단위 데이터를 행 단위 모델로 변환), 실서버 왕복을 확인한 뒤 구 로직을 제거하는 2단계로 진행했습니다. 신·구 동시 운영 상태에서 UI부터 바꾸는 안은 완료·보상이 이중으로 처리될 수 있어 버렸습니다.</p></div>
+    </div>
+    <ul>
+      <li>1단계에서 실서버 왕복으로 퀘스트 19건과 필드 순서가 일치하는 것을 확인했습니다.</li>
+      <li>2단계에서 구 퀘스트 로직을 제거하고 일일·업적 UI를 새 모델로 전환한 뒤, 디자인 시안 기준 UI를 반영했습니다.</li>
+      <li>수신부는 데이터가 아직 없으면 읽기 가능 상태를 기다렸다 재시도하고, 프레임 하나를 조립하는 전체 과정에 단일 시간 제한을 둬 초과하면 부분 프레임을 재사용하지 않고 연결을 끊게 했습니다.</li>
+      <li>퀘스트 파싱·수신부·에셋·디자인 회귀 테스트를 추가했습니다.</li>
+    </ul>
+    <div class="grid2 figs">
+      <figure>
+        <script type="text/x-mermaid">
+stateDiagram-v2
+  [*] --> 기존: 클라이언트 판정 퀘스트
+  기존 --> 병행: 1단계 · 새 송수신과 모델만 추가
+  병행 --> 검증: 실서버 왕복 (19건 · 필드 순서)
+  검증 --> 전환: 2단계 · 구 로직 제거 + 일일/업적 UI
+  전환 --> 디자인: 시안 반영
+        </script>
+        <figcaption>2단계 전환</figcaption>
+      </figure>
+      <figure>
+        <script type="text/x-mermaid">
+flowchart TB
+  R["소켓 수신"] --> F{"결과"}
+  F -- 실패 --> X["연결 종료"]
+  F -- 0바이트 --> W["읽기 가능까지 대기 후 재시도"]
+  F -- n바이트 --> A["버퍼에 누적"]
+  W --> D{"프레임 조립 시간 초과?"}
+  A --> D
+  D -- 예 --> T["부분 프레임 버리고 연결 종료"]
+  D -- 아니오 --> C{"헤더 + 본문 완성?"}
+  C -- 아니오 --> R
+  C -- 예 --> H["패킷 처리"]
+        </script>
+        <figcaption>수정한 수신 흐름</figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <article id="a4" class="item">
+    <h3>자동화 테스트 도입과 에디터 도구</h3>
+    <p class="lead">자동화 테스트가 하나도 없던 승계 코드베이스에 UE Automation 테스트를 도입하고, 반복 작업을 Commandlet과 에디터 유틸로 만들었습니다.</p>
+    <ul class="chips"><li>2026.09 ~</li><li>UE Automation Test</li><li>Commandlet</li><li>Editor Utility</li></ul>
+    <div class="metrics small">
+      <div class="metric"><strong>0 → 49</strong><span>테스트 정의 (원본 코드베이스 0개)</span></div>
+      <div class="metric"><strong>26</strong><span>테스트 소스 파일</span></div>
+    </div>
+    <ul>
+      <li>패킷 파싱, REST API 계약, 에셋 무결성, 입력 회귀 등을 검사하는 테스트를 기능마다 함께 작성했습니다.</li>
+      <li>상호작용 오브젝트 ID 등록 도구는 기존 양수 ID는 유지하고 0인 것만 새로 발급합니다. DataTable과 로드된 Actor 전체에서 중복을 검사하고 레벨 경로를 정확히 대조하며, <b>오류가 하나라도 있으면 아무것도 바꾸지 않습니다</b>.</li>
+      <li>관광 지도·상호작용 연결·UI 작성 등 반복 작업을 Commandlet으로 만들고, 에디터에서만 쓰는 디버깅 타임아웃은 패키지 기본값과 분리했습니다.</li>
+    </ul>
+    <figure>
+      <script type="text/x-mermaid">
+flowchart LR
+  S["레벨 Actor 스캔"] --> V1["타입 검사"] --> V2["DataTable + 로드된 Actor<br/>전체 중복 검사"] --> V3["레벨 경로 검사"] --> Q{"오류 0건?"}
+  Q -- 아니오 --> N["ID · DataTable 모두 무변경"]
+  Q -- 예 --> A["기존 ID 유지 · 0만 신규 발급"] --> D["DataTable 행 등록"]
+      </script>
+      <figcaption>상호작용 ID 등록 도구 — 전부 성공하거나 아무것도 바꾸지 않음</figcaption>
+    </figure>
+  </article>
+
+  <article id="a5" class="item">
+    <h3>빌드/배포 자동화</h3>
+    <p class="lead">Android 원클릭 빌드를 Jenkins에 연결하고 iOS TestFlight·Windows 패키징 파이프라인까지 구축했습니다. 버전 역전을 막는 versionCode 정책도 세웠습니다.</p>
+    <ul class="chips"><li>2026.06 ~</li><li>Jenkins</li><li>Android · iOS · Windows</li><li>semver</li></ul>
+    <ul>
+      <li>최신 코드 fast-forward pull → semver 기반 versionCode 자동 계산 → 패키징 → 스토어 내부 테스트 자동 업로드로 이어지는 Android 빌드 래퍼를 만들어 Jenkins에 연결했습니다. Windows 배치 파서 결함(괄호 이스케이프·코드페이지)도 수정했습니다.</li>
+      <li>iOS는 배포 서명 팀을 전환하고 TestFlight 컴파일·서명 실패를 해결해 Jenkins job으로 TestFlight 배포까지 진행했습니다.</li>
+      <li>Windows 패키징도 별도 Jenkins 파이프라인으로 운용하고, 청크 패키지와 CDN 다운로드를 검증해 모바일 이관 절차를 문서화했습니다.</li>
+      <li>원본은 플랫폼별로 versionCode를 따로 관리해 특정 조건에서 자릿수가 넘쳐 스토어 업로드가 거부될 수 있었습니다. 그래서 하나의 semver에서 항상 단조증가하는 값을 뽑는 고정 자릿수 인코딩을 설계하고, 계산 지점을 빌드 래퍼 하나로 일원화했습니다.</li>
+      <li>서버 대상(Dev/Live)에 따라 패키지명이 자동 분기되게 하고, 리브랜딩에 맞춰 패키징 스크립트 12개 파일의 프로젝트명 치환을 일괄 적용했습니다.</li>
+    </ul>
+    <div class="grid2 figs">
+      <figure>
+        <script type="text/x-mermaid">
+flowchart TB
+  J["Jenkins job"] --> W["Android 빌드 래퍼"]
+  W --> P["git pull --ff-only"]
+  P --> V["semver + 빌드 카운터"]
+  V --> E["versionCode 인코딩"]
+  E --> K["패키징<br/>(서버 대상별 패키지명)"]
+  K --> Q{"자동 업로드?"}
+  Q -- 예 --> UP["스토어 내부 테스트"]
+  Q -- 아니오 --> M["산출물 보관"]
+  UP --> R["결과 요약 + 종료 코드"]
+  M --> R
+        </script>
+        <figcaption>Android 원클릭 빌드 파이프라인</figcaption>
+      </figure>
+      <div class="formula">
+        <p class="formula-title">versionCode 고정 자릿수 인코딩</p>
+        <p class="formula-eq">MAJOR × 1,000,000<br>+ MINOR × 10,000<br>+ PATCH × 100<br>+ 빌드 번호</p>
+        <table>
+          <tbody>
+            <tr><td>1.0.1 · 빌드 4</td><td>1,000,104</td></tr>
+            <tr><td>1.0.10 · 빌드 1</td><td>1,001,001</td></tr>
+            <tr><td>1.1.0 · 빌드 1</td><td>1,010,001</td></tr>
+          </tbody>
+        </table>
+        <p class="formula-note">자릿수를 고정해 1.0.10 &lt; 1.1.0 순서가 항상 유지됩니다.</p>
+      </div>
+    </div>
+  </article>
+
+  <article id="a6" class="item">
+    <h3>크로스플랫폼 크래시 4건 트러블슈팅</h3>
+    <p class="lead">원인 규명이 까다로운 크래시 4건을 근본 원인까지 추적해 해결했습니다.</p>
+    <ul class="chips"><li>2026.06 ~ 08</li><li>ndk-stack</li><li>cook · OBB</li><li>Shipping / Development 구성</li></ul>
+    <div class="cards">
+      <div class="card"><h4>cook 데드락</h4><p>빌드머신에서도 재현되는 cook 중단을 설정 토글로 격리해 분산 셰이더 컴파일 플러그인의 데드락으로 특정하고, 플러그인을 비활성화해 패키징 블로커를 해소했습니다.</p></div>
+      <div class="card"><h4>로그인 맵 SIGSEGV</h4><p>청크 다운로더를 끈 설정인데도 cook이 일부 콘텐츠를 다운로드형 청크로 분리해, OBB에 부팅 맵만 들어가 로그인 맵 진입 시 크래시가 났습니다. ndk-stack 심볼 분석으로 특정하고 전 콘텐츠를 로컬 패키지에 포함했습니다.</p></div>
+      <div class="card"><h4>부팅 맵 레이스</h4><p>부팅 완료 신호를 동기 브로드캐스트하는 도중 BeginPlay 안에서 레벨 이동이 일어나 크래시가 났습니다. 처리를 다음 틱으로 지연해 해결했습니다.</p></div>
+      <div class="card"><h4>Shipping 가드 불일치</h4><p>Dev 테스트 빌드도 Shipping 구성으로 빌드돼, 출시용 가드가 로그 등 개발 기능까지 꺼서 진단이 어렵고 외부 API 실패 시 앱이 종료됐습니다. 서버 대상 매크로를 함께 보는 조건으로 바꿔 여러 커밋에 걸쳐 정리했습니다.</p></div>
+    </div>
+  </article>
+
+  <article id="a7" class="item">
+    <h3>웹뷰 미디어 권한 문제 규명 및 OS 브라우저 오버레이 전환</h3>
+    <p class="lead">웹뷰 안의 카메라·마이크가 동작하지 않는 원인을 엔진 웹뷰 소스까지 추적해 규명하고, 엔진 패치 없이 해결했습니다.</p>
+    <ul class="chips"><li>2026.06</li><li>Android · iOS</li><li>Chrome Custom Tabs</li><li>SFSafariViewController</li></ul>
+    <ul>
+      <li>Android·iOS 엔진 기본 웹뷰가 웹의 미디어 권한 요청을 처리하지 않아 <b>기본 거부</b>된다는 것을 확인했습니다. 엔진 내장 웹뷰는 구버전 Chromium이라 최신 웹 번들과도 호환되지 않았습니다.</li>
+      <li>엔진을 패치하는 대신 웹 콘텐츠를 OS 브라우저 오버레이로 띄우도록 바꿔, 앱 권한 선언 변경 없이 브라우저가 권한을 처리하게 했습니다(Android 실기기 검증).</li>
+    </ul>
+    <figure>
+      <script type="text/x-mermaid">
+flowchart LR
+  subgraph A["임베디드 웹뷰 (폐기)"]
+    direction TB
+    A1["앱 안에서 엔진 웹뷰로 렌더"] --> A2["최신 웹 번들 비호환"]
+    A1 --> A3["미디어 권한 요청 미처리 → 기본 거부"]
+    A3 --> A4["해결하려면 엔진 패치 필요"]
+  end
+  subgraph B["OS 브라우저 오버레이 (채택)"]
+    direction TB
+    B1["Custom Tabs / SFSafariViewController"] --> B2["시스템 브라우저 엔진으로 렌더"]
+    B1 --> B3["카메라 · 마이크 권한을 브라우저가 처리"]
+    B1 --> B4["엔진 패치 · 앱 권한 변경 없음"]
+  end
+      </script>
+      <figcaption>두 방식의 비교</figcaption>
+    </figure>
+  </article>
+
+  <article id="a8" class="item">
+    <h3>게임 월드 진입/전환 흐름</h3>
+    <p class="lead">로그인 후 월드 선택 로비를 거쳐 각 지역으로 이동하는 진입 흐름을 설계·구현하고, 모바일 사용성에 맞춰 입력 방식을 개편했습니다.</p>
+    <ul class="chips"><li>2026.08 ~ 09</li><li>C++</li><li>UMG</li><li>레벨 전환 서브시스템</li></ul>
+    <ul>
+      <li>레벨 타입을 데이터 테이블 키·서버 맵 타입과 일치하도록 재정의하고 상태 소유권을 정리했습니다.</li>
+      <li>게임 흐름이 바뀌어 로그인 직후 캐릭터 없는 로비를 거치게 되면서 서버 입장 요청이 빠진 것을 찾아 수정했습니다.</li>
+      <li>월드 선택 입력은 3D 건물 피킹으로 시작했지만, 모바일에서는 작은 건물을 누르기 어렵고 호버도 없어 상시 표시 이름표 버튼 + 드래그·핀치 카메라로 개편했습니다.</li>
+    </ul>
+    <figure>
+      <script type="text/x-mermaid">
+sequenceDiagram
+  participant C as 클라이언트
+  participant L as 레벨 전환 서브시스템
+  participant S as 게임 서버
+  C->>S: 로그인
+  S-->>C: 로그인 응답
+  C->>L: 월드 선택 로비 로드
+  C->>S: 입장 요청 (누락 → 추가)
+  S-->>C: 입장 응답
+  C->>C: 이름표 버튼으로 지역 선택
+  C->>L: 맵 전환 요청 (레벨 타입)
+  L->>S: 방 이동 요청
+  S-->>L: 방 이동 응답
+  L->>C: 맵 로드 완료
+      </script>
+      <figcaption>월드 진입/전환 흐름</figcaption>
+    </figure>
+  </article>
+
+  <article id="a9" class="item">
+    <h3>보물찾기 — 서버 상태 패킷과 Actor 등록 순서 경합 해결</h3>
+    <p class="lead">기존 상호작용·우편·재화 시스템을 재사용해 보물찾기 클라이언트를 구현하고, Actor 등록보다 상태 패킷이 먼저 도착하면 상태가 사라지던 경합을 해결했습니다.</p>
+    <ul class="chips"><li>2026.08</li><li>4개 지역 × 5 지점</li><li>서버 담당자와 공동 작업</li></ul>
+    <ul>
+      <li>아직 등록되지 않은 ID의 마지막 상태를 보관해 두고, Actor가 늦게 등록되면 그 상태를 다시 적용하게 했습니다.</li>
+    </ul>
+    <figure>
+      <script type="text/x-mermaid">
+sequenceDiagram
+  participant S as 게임 서버
+  participant M as 보물찾기 서브시스템
+  participant A as 보물 Actor
+  S->>M: 생성/제거 상태 (ID 7)
+  M->>M: ID 7 미등록 → 마지막 상태 보관
+  A->>M: 레벨 로드 후 ID 7 등록
+  M->>A: 보관한 상태 재적용
+      </script>
+      <figcaption>보류 상태 재적용</figcaption>
+    </figure>
+  </article>
+
+  <article id="a10" class="item">
+    <h3>랭킹 — 요청 ID 없는 응답을 상태 게이트로 처리</h3>
+    <p class="lead">새 TCP 랭킹 응답에는 요청 ID가 없어 늦은 응답과 중복 요청을 구분할 수 없었습니다. 지표(탭)별 대기 상태 게이트로 UI 상태가 꼬이지 않게 했습니다.</p>
+    <ul class="chips"><li>2026.10</li><li>3개 탭 · 상위 30위 · 내 순위 고정</li><li>실서버 검증</li></ul>
+    <figure>
+      <script type="text/x-mermaid">
+stateDiagram-v2
+  [*] --> Idle
+  Idle --> Pending: 탭 요청 송신
+  Pending --> Idle: 해당 지표 응답 수신
+  Pending --> Pending: 같은 지표 중복 요청 무시
+  Pending --> Timeout: 시간 초과
+  Timeout --> Idle: 사용자 재시도
+      </script>
+      <figcaption>지표별 대기 상태 — 무조건 재요청하지 않음</figcaption>
+    </figure>
+  </article>
+
+  <article id="a11" class="item">
+    <h3>관광 콘텐츠 — 전체 지도·관광지 상세·안내판 상호작용</h3>
+    <p class="lead">아산시 전체 지도(핀·확대/축소·드래그·핀치)와 관광지 상세·방문 보상 팝업을 구현하고, 맵의 안내판 22개를 에디터 도구로 일괄 연결했습니다.</p>
+    <ul class="chips"><li>2026.09 ~ 10</li><li>UMG · RenderTransform</li><li>DataTable RowName</li></ul>
+    <div class="pd">
+      <div><h4>문제</h4><p>지도에 핀이 하나도 나오지 않았습니다. 관광지 데이터 23행의 숫자 ID가 전부 0이었고, 핀 생성이 ID 0을 건너뛰고 있었습니다.</p></div>
+      <div><h4>해결</h4><p>관광지 전용 숫자 ID를 버리고 DataTable 행 이름을 식별자로 쓰게 했습니다. 즐겨찾기용 서버 코드와는 분리해 유지했습니다. 방문 보상은 지급 계약이 정해지지 않아 표시 전용으로 두었습니다.</p></div>
+    </div>
+  </article>
+
+  <article id="a12" class="item compact">
+    <h3>기타</h3>
+    <ul>
+      <li><b>스마트폴 현황(Mock)</b> — 외부 API가 아직 없어 클라이언트 Mock 데이터로 시설 현황 UI를 먼저 완성하고, 실연동 때 데이터 소스만 바꾸도록 분리했습니다.</li>
+      <li><b>즐겨찾기 TCP 연동</b> — 관광지 즐겨찾기 조회·등록·해제를 게임 서버 TCP로 연동하고 회귀 테스트를 추가했습니다(실서버 검증).</li>
+      <li><b>Android FCM 푸시</b> — 푸시 수신 플러그인과, 개발 메뉴에서 자기 기기로 보내 보는 테스트 도구를 만들었습니다. 테스트 토큰은 게임 인증 토큰과 분리했습니다.</li>
+      <li><b>아바타·아이템 데이터 이관</b> — 신규 아이템 체계로 DataTable을 옮기고 외형 성별 규약을 정리했습니다(구버전 세이브 호환 포함). 미리보기 의상 텍스처 흐림을 mip 스트리밍 문제로 규명해, 전역 설정 대신 미리보기 메시에만 적용하고 화면을 나가면 원복했습니다.</li>
+    </ul>
+  </article>
+</section>
+
+<!-- ============================ ROLLINGSEED ============================ -->
+<section id="rollingseed" class="project">
+  <div class="project-head">
+    <p class="eyebrow">03 · 프리랜서</p>
+    <h2>RollingSeed <small>영어 단어 학습용 교육 미니게임 모음집 (17개 언어)</small></h2>
+    <dl class="facts">
+      <div><dt>기간</dt><dd>2025.08 ~ 2025.11 (약 4개월)</dd></div>
+      <div><dt>역할</dt><dd>Unity 클라이언트 개발자 · 1인 전담 마이그레이션</dd></div>
+      <div><dt>기술</dt><dd>Unity 2021.3 LTS · C# · UniTask · Addressables · I2 Localization · DOTween</dd></div>
+    </dl>
+  </div>
+
+  <article id="r1" class="item">
+    <h3>레거시 → 리마스터 이식 (미니게임 6종)</h3>
+    <p class="lead">기획서 없이 레거시 프로젝트를 직접 플레이하고 코드를 읽어 동작 규칙을 파악한 뒤, 리마스터 프레임워크로 그대로 옮겼습니다.</p>
+    <ul class="chips"><li>RollingPop</li><li>RollingZoo</li><li>RollingZookeeper</li><li>RollingOrchard</li><li>RollingFarmersMarket</li><li>RollingDoctor (추가 배정)</li></ul>
+    <ul>
+      <li>게임마다 레거시의 폴더 구조·네임스페이스·씬/프리팹 구성을 먼저 분석해 이관 계획을 세우고 착수했습니다.</li>
+      <li>UI·로직·입력·데이터가 한 클래스에 섞여 있던 부분을 View–Presenter 경계로 나눠 리마스터 프레임워크 규약에 맞춰 다시 구현했습니다.</li>
+      <li>씬 전환과 에셋 로드를 UniTask 비동기로 통일하고, 게임별 리소스 로딩을 Addressables로 일원화했습니다.</li>
+      <li>처음 배정된 5종에 Doctor가 추가 배정돼 6종 모두 납품하고 계약을 마쳤습니다.</li>
+      <li>6종이 공유하는 공용 컴포넌트의 결함은 나머지 게임에 영향이 가지 않도록 수정 범위를 해당 게임 매니저 안으로 한정했습니다. 외부 QA가 전달한 예외는 스택트레이스 기준으로 고치고, 재현 테스트에서 발견한 후속 예외까지 같은 사이클에 처리했습니다.</li>
+    </ul>
+  </article>
+
+  <article id="r2" class="item">
+    <h3>공통 라운드 프레임워크 위에서 6종의 차이 흡수</h3>
+    <p class="lead">공통 게임 루프의 Init → Ready → Play → End → Cleanup 규약에 맞춰, 게임별 RoundController·InitParams로 규칙 차이를 흡수했습니다.</p>
+    <figure>
+      <script type="text/x-mermaid">
+flowchart LR
+  subgraph Common["공통 게임 루프"]
+    direction LR
+    I["Init"] --> R["Ready"] --> P["Play"] --> E["End"] --> C["Cleanup"]
+  end
+  GM["GameManager<br/>게임 전체 상태 · 수명 주기"] --> Common
+  P --> RC["RoundController<br/>라운드 시작 → 진행 → 판정 → 다음 라운드"]
+  IP["InitParams<br/>라운드 구성 값 주입"] --> RC
+  RC --> G1["Zoo · Zookeeper<br/>동물 이름 맞추기"]
+  RC --> G2["Doctor<br/>신체 부위 이름"]
+  RC --> G3["Orchard · Market<br/>과일·채소 이름"]
+      </script>
+      <figcaption>하드코딩된 상태 관리를 초기화 인자 주입으로 바꿔 게임별 규칙만 구현하면 되도록 정리</figcaption>
+    </figure>
+  </article>
+
+  <article id="r3" class="item">
+    <h3>게임 규칙 구현 사례</h3>
+    <p class="lead">레거시를 플레이해 추출한 규칙을 리마스터 구조로 다시 구현했습니다. 아래 영상은 재구현한 결과물입니다.</p>
+
+    <h4>RollingFarmersMarket — 손님 스폰 규칙</h4>
+    <div class="grid2">
+      <figure>
+        <script type="text/x-mermaid">
+flowchart TB
+  T["인게임 타이머가 임계값 이상"] --> Q{"출제할 문제가 있음?"}
+  Q -- 아니오 --> X["스폰하지 않음"]
+  Q -- 예 --> L{"비어 있는 라인?"}
+  L -- 없음 --> X
+  L -- 있음 --> CH["사용 중이 아닌 캐릭터 타입 선택"]
+  CH --> POOL["오브젝트 풀에서 꺼내 라인에 배치<br/>진입 지점 · 정렬 순서 자동 설정"]
+  B["대량 주문 이벤트<br/>랜덤 시점 1회"] --> BL{"전용 라인 비어 있음?<br/>동시 1명 이하?"}
+  BL -- 예 --> BS["대량 주문 손님 스폰"]
+        </script>
+        <figcaption>손님 스폰 제한 4가지 — 라인 점유 · 캐릭터 중복 · 시간/진행 · 대량 주문</figcaption>
+      </figure>
+      <div class="videos">
+        <figure class="video"><video src="assets/rollingseed/market-serve.mp4" poster="assets/rollingseed/market-serve.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>여러 라인에 손님이 동시에 등장·대기</figcaption></figure>
+        <figure class="video"><video src="assets/rollingseed/market-patience.mp4" poster="assets/rollingseed/market-patience.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>손님별 대기 시간 게이지와 이탈</figcaption></figure>
+        <figure class="video"><video src="assets/rollingseed/market-bulk-order.mp4" poster="assets/rollingseed/market-bulk-order.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>대량 주문 이벤트</figcaption></figure>
+      </div>
+    </div>
+
+    <h4>RollingZookeeper — 다중 라인 출제와 대전 모드</h4>
+    <div class="grid2">
+      <figure>
+        <script type="text/x-mermaid">
+flowchart TB
+  A["랜덤 알파벳 추출"] --> B["추출한 알파벳은 후보에서 제거<br/>같은 알파벳 문제는 화면에 1개만"]
+  B --> C["해당 알파벳 동물 생성"]
+  C --> D["번역된 이름으로 문제 박스 생성"]
+  D --> E["라인의 시작점에서 끝점으로 달림<br/>방향은 랜덤"]
+  E --> F{"정답 입력?"}
+  F -- 예 --> G["득점 · 이름 아나운스 · 사라짐"]
+  F -- 끝점 도달 --> H["문제 박스와 함께 사라짐"]
+        </script>
+        <figcaption>문제 생성과 라인 이동 흐름. 대전 모드는 1P/2P 득점 색과 승패 연출을 구분합니다.</figcaption>
+      </figure>
+      <div class="videos">
+        <figure class="video"><video src="assets/rollingseed/zookeeper-answer.mp4" poster="assets/rollingseed/zookeeper-answer.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>여러 라인의 동시 출제와 정답 처리</figcaption></figure>
+        <figure class="video"><video src="assets/rollingseed/zookeeper-versus-result.mp4" poster="assets/rollingseed/zookeeper-versus-result.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>대전 모드 결과 화면</figcaption></figure>
+      </div>
+    </div>
+  </article>
+
+  <article id="r4" class="item">
+    <h3>다국어 조회 경로 버그 규명</h3>
+    <p class="lead">명시적으로 전달한 언어 키가 무시되고 에디터 사용자 언어로 번역이 반환되던 문제를 I2 Localization 내부 조회 경로까지 추적해 해결했습니다.</p>
+    <ul>
+      <li>처음에는 미번역 후보를 제외하는 방식으로 접근했지만, 적용 후 문제 후보가 전부 사라지는 것을 보고 원복했습니다. 증상의 일부만 설명하는 수정이라고 판단했습니다.</li>
+      <li>조회 경로를 다시 좁혀, 2차 조회 경로가 현재 언어에 의존하는 구조를 원인으로 특정하고 term 직접 조회로 교체했습니다.</li>
+    </ul>
+  </article>
+
+  <article id="r5" class="item">
+    <h3>사운드 에셋 등록 자동화 도구</h3>
+    <p class="lead">17개 언어 × 동물·신체 부위 조합으로 생기는 200개가 넘는 사운드 에셋의 수동 등록을 EditorWindow 도구 2종으로 자동화했습니다.</p>
+    <ul>
+      <li>언어별 사운드마다 딕셔너리 항목 생성, Addressables 그룹 등록, AssetReference GUID 할당을 손으로 반복하던 구조였습니다.</li>
+      <li>동물 이름 사운드용 도구를 먼저 만들고, 신체 이름 사운드로 확장할 때는 enum 이름에서 폴더명을 만들던 방식을 17개 언어 명시 매핑으로 바꿨습니다. 사운드가 없는 언어와 sentinel 키는 열거 단계에서 제외했습니다(신체 키 50종 × 17개 언어).</li>
+    </ul>
+    <figure>
+      <script type="text/x-mermaid">
+flowchart LR
+  K["Enum 기반 키 생성<br/>언어 × 이름"] --> F["파일명 규칙으로<br/>사운드 존재 확인"]
+  F --> G["Addressables 그룹<br/>자동 생성 · 등록"]
+  G --> R["딕셔너리에 GUID 할당<br/>AssetReference 바인딩"]
+  R --> D["등록 상태 진단<br/>누락 에셋 사전 감지"]
+      </script>
+      <figcaption>공통 등록 파이프라인</figcaption>
+    </figure>
+  </article>
+</section>
+
+<section id="workstyle" class="block">
+  <h2>작업 방식</h2>
+  <ul class="summary-list">
+    <li><b>라이브 안정성 우선</b> — 라이브 대상 변경은 feature 브랜치에서 진행하고, 영향 범위·사이드이펙트·테스트 포인트를 문서화한 뒤 반영합니다.</li>
+    <li><b>되돌리기 어려운 작업은 따로 분류</b> — 인증 경로 변경처럼 영향이 크고 되돌리기 어려운 작업은 설계 근거를 먼저 문서로 정리하고 검토한 뒤 반영합니다. 승계된 기술부채는 즉시 지우지 않고 백로그로 추적합니다.</li>
+    <li><b>서버와 사전 합의</b> — 패킷 구조·에러 코드·브로드캐스트 범위를 문서로 먼저 합의하고, 서버 생성물이 확정본인 계약은 제안서로 전달합니다.</li>
+    <li><b>검증 가능한 단위로 진행</b> — 기존 흐름을 유지한 채 새 경로를 먼저 추가하고, 실서버 왕복과 회귀 테스트로 확인한 뒤 구 경로를 제거합니다.</li>
+    <li><b>반복 작업은 도구로</b> — Editor Utility Widget·Python·Commandlet(Unreal), EditorWindow·ContextMenu·PropertyDrawer(Unity)로 휴먼 에러를 줄입니다.</li>
+  </ul>
+</section>
+
+<footer class="foot">
+  <p>2026년 10월 기준 · 회사 내부 코드와 서버 정보는 포함하지 않았고, 사내 식별자는 일반 명칭으로 바꿔 적었습니다.</p>
+</footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
