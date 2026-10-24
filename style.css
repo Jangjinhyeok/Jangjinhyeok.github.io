@@ -212,3 +212,4 @@ th { color: var(--ink-3); font-weight: 600; font-size: 13px; }
 .shot img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--line); background: #1e1e1e; }
 .shot a:hover img { border-color: var(--accent); }
 .media.single .video { max-width: 640px; }
+.shot.narrow { max-width: 360px; }
