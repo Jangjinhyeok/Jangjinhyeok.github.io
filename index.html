@@ -77,7 +77,7 @@
   </div>
   <ul class="summary-list">
     <li>UE 5.6 라이브 서비스 메타버스 <b>Synthoria</b>에서 미니게임·외부 지갑 연동·상점 기능을 개발하고, 상호작용·상점 시스템의 레거시 구조를 개선했습니다.</li>
-    <li>같은 회사 신규 프로젝트 <b>아산모아 메타버스</b>에서 라이브 코드베이스를 포크하는 마이그레이션을 클라이언트 단독으로 리드하고, 웹 로그인 전환·신규 백엔드 이관·서버 권위형 퀘스트 전환·자동화 테스트 도입·Android/iOS/Windows 빌드와 콘텐츠 CDN 배포 파이프라인까지 담당하고 있습니다.</li>
+    <li>같은 회사 신규 프로젝트 <b>아산모아 메타버스</b>에서 라이브 코드베이스를 포크하는 마이그레이션을 클라이언트 단독으로 설계·수행하고, 웹 로그인 전환·신규 백엔드 이관·서버 권위형 퀘스트 전환·자동화 테스트 도입·Android/iOS/Windows 빌드와 콘텐츠 CDN 배포 파이프라인까지 담당하고 있습니다.</li>
     <li>Unity 기반 교육용 미니게임 모음집 <b>RollingSeed</b>에서 기획서 없이 레거시를 직접 플레이·분석해 미니게임 6종을 리마스터 프레임워크로 이식했습니다.</li>
     <li>Unreal Insights로 병목을 계측해 원인을 좁히고, 소프트 레퍼런스와 비동기 로딩으로 게임 스레드 블로킹을 제거한 경험이 있습니다.</li>
     <li>Editor Utility Widget·Python(Unreal), EditorWindow(Unity), Commandlet으로 반복 작업을 도구화해 왔습니다.</li>
@@ -106,7 +106,7 @@
       <div>
         <h4>배경</h4>
         <ul>
-          <li>외주로 제작이 끝난 상태로 인계받았으나, 외주사가 Unity 기반 개발사라 스테이지 오브젝트를 동적 생성 대신 Actor Component로 일일이 고정 배치하는 등 Unity 스타일 구조가 그대로 이식돼 있었습니다.</li>
+          <li>외주로 제작이 끝난 상태로 인계받았으나, 스테이지 오브젝트를 런타임 스폰 대신 Stage Blueprint마다 Child Actor Component로 일일이 고정 배치한 구조였습니다.</li>
           <li>설계 문서가 없어 코드와 실제 인게임 플레이만으로 구조와 동작 규칙을 파악했습니다.</li>
         </ul>
       </div>
@@ -114,7 +114,7 @@
         <h4>리팩토링 및 재구현</h4>
         <ul>
           <li>Stage Blueprint에 Child Actor Component로 고정돼 있던 오브젝트 배치를 DataTable 기반 스폰 구조로 전환하고, 하드코딩된 좌표·회전값과 타입 오류를 정리했습니다.</li>
-          <li>GameMode 상태 흐름 재설계, 물리 기반 조작, UI, 18개 스테이지 정리까지 단독 수행했습니다.</li>
+          <li>공용 미니게임 FSM 위의 라운드 진행·강제 종료·컨티뉴 흐름 구현과 물리 기반 조작, UI, 18개 스테이지 정리까지 단독 수행했습니다.</li>
         </ul>
       </div>
     </div>
@@ -146,7 +146,7 @@ flowchart LR
           <li>Editor Utility Widget과 Python 스크립트로 Stage Blueprint 안 Coin·Gimmick의 Transform을 순회해 CSV로 추출했습니다.</li>
           <li>CSV Reimport 기반 DataTable 갱신 흐름을 만들어 18개 스테이지의 반복 수동 작업을 줄였습니다.</li>
         </ul>
-        <h4>모바일 UX</h4>
+        <h4>입력·샷 제어</h4>
         <ul>
           <li>Enhanced Input 기반 3축 제어(회전 / 각도 / 파워)를 구현했습니다.</li>
           <li>AddImpulse 기반 물리 샷과 궤적 시각화(Prediction Line)를 구현했습니다.</li>
@@ -330,7 +330,7 @@ flowchart TB
 
     <h4>Unreal Insights 기반 프레임드랍 최적화</h4>
     <div class="pd">
-      <div><h4>문제</h4><p>상점을 처음 열 때 약 540ms 프레임 스파이크(1.9fps)가 발생했습니다. Insights 기준 해당 프레임 541ms 중 동기 에셋 로딩이 540ms였습니다.</p></div>
+      <div><h4>문제</h4><p>상점을 처음 열 때 약 540ms 프레임 스파이크가 발생했습니다. Insights 기준 해당 프레임 541ms 중 동기 에셋 로딩이 540ms였습니다.</p></div>
       <div><h4>원인 (2계층)</h4><p>① 아이템 정의 조회가 메모리에 없는 Definition Blueprint를 게임 스레드에서 <b>동기 로딩</b>했습니다. ② 탈것 Definition이 스폰 Actor 클래스를 <code>TSubclassOf&lt;AActor&gt;</code> 하드 레퍼런스로 들고 있어 탈것 Blueprint·메시·머티리얼까지 <b>연쇄 로딩</b>됐습니다.</p></div>
     </div>
 
@@ -414,7 +414,7 @@ sequenceDiagram
   </div>
 
   <article id="a1" class="item">
-    <h3>프로젝트 마이그레이션 리드 (Fork-and-Trim)</h3>
+    <h3>프로젝트 마이그레이션 단독 설계·수행 (Fork-and-Trim)</h3>
     <p class="lead">라이브 서비스 코드베이스를 통째 복제한 뒤 안전한 항목만 점진적으로 제거하는 방식을 설계하고, 5개 게이트 중 4개를 완료했습니다.</p>
     <ul class="chips"><li>2026.06 ~</li><li>전략 설계 · 게이트 관리 · 안전 트리밍</li><li>Android 내부 테스트 · iOS TestFlight 배포 도달</li></ul>
     <ul>
@@ -606,7 +606,7 @@ flowchart TB
             <tr><td>1.1.0 · 빌드 1</td><td>1,010,001</td></tr>
           </tbody>
         </table>
-        <p class="formula-note">자릿수를 고정해 1.0.10 &lt; 1.1.0 순서가 항상 유지됩니다.</p>
+        <p class="formula-note">자릿수를 고정해 1.0.10 &lt; 1.1.0 순서가 항상 유지됩니다. 대신 PATCH·빌드 번호는 각각 99까지만 표현할 수 있습니다.</p>
       </div>
     </div>
 
@@ -636,7 +636,7 @@ flowchart LR
 
   <article id="a6" class="item">
     <h3>크로스플랫폼 크래시 4건 트러블슈팅</h3>
-    <p class="lead">원인 규명이 까다로운 크래시 4건을 근본 원인까지 추적해 해결했습니다.</p>
+    <p class="lead">원인 규명이 까다로운 크래시·빌드 블로커 4건을 추적해 3건은 근본 원인을 고치고, cook 데드락 1건은 원인 플러그인을 특정해 비활성화로 우회했습니다.</p>
     <ul class="chips"><li>2026.06 ~ 08</li><li>ndk-stack</li><li>cook · OBB</li><li>Shipping / Development 구성</li></ul>
     <div class="cards">
       <div class="card"><h4>cook 데드락</h4><p>빌드머신에서도 재현되는 cook 중단을 설정 토글로 격리해 분산 셰이더 컴파일 플러그인의 데드락으로 특정하고, 플러그인을 비활성화해 패키징 블로커를 해소했습니다.</p></div>
@@ -917,7 +917,7 @@ flowchart TB
 
   <article id="r5" class="item">
     <h3>사운드 에셋 등록 자동화 도구</h3>
-    <p class="lead">17개 언어 × 동물·신체 부위 조합으로 생기는 200개가 넘는 사운드 에셋의 수동 등록을 EditorWindow 도구 2종으로 자동화했습니다.</p>
+    <p class="lead">17개 언어 × 동물·신체 부위 이름 조합으로 늘어나는 사운드 에셋의 수동 등록을 EditorWindow 도구 2종으로 자동화했습니다.</p>
     <ul>
       <li>언어별 사운드마다 딕셔너리 항목 생성, Addressables 그룹 등록, AssetReference GUID 할당을 손으로 반복하던 구조였습니다.</li>
       <li>동물 이름 사운드용 도구를 먼저 만들고, 신체 이름 사운드로 확장할 때는 enum 이름에서 폴더명을 만들던 방식을 17개 언어 명시 매핑으로 바꿨습니다. 사운드가 없는 언어와 sentinel 키는 열거 단계에서 제외했습니다(신체 키 50종 × 17개 언어).</li>
