@@ -36,6 +36,7 @@
         <li><a href="#a9">보물찾기 상태 경합</a></li>
         <li><a href="#a10">랭킹 응답 처리</a></li>
         <li><a href="#a11">관광 지도</a></li>
+        <li><a href="#a13">커스터마이징 프레임 개선</a></li>
         <li><a href="#a12">기타</a></li>
       </ol>
     </li>
@@ -795,6 +796,64 @@ stateDiagram-v2
       <figure class="video"><video src="assets/captures/asanmoa/a11-tourmap-pin-detail.mp4" poster="assets/captures/asanmoa/a11-tourmap-pin-detail.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>관광 지도 — 축소 → 핀 선택 → 관광지 상세 → 드래그</figcaption></figure>
       <figure class="video"><video src="assets/captures/asanmoa/a11b-signboard-to-tourmap.mp4" poster="assets/captures/asanmoa/a11b-signboard-to-tourmap.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>맵 안내판 상호작용 → 해당 관광지 상세로 지도 열림</figcaption></figure>
     </div>
+  </article>
+
+  <article id="a13" class="item">
+    <h3>캐릭터 커스터마이징 화면 모바일 프레임 드랍 개선 (12fps → 60fps)</h3>
+    <p class="lead">커스터마이징 화면에서 모바일에서만 프레임이 약 12fps로 떨어지던 문제를 실기기 프로파일링으로 추적해, 아바타를 그리던 SceneCapture 4개가 원인임을 특정하고 Render Target 최적화와 성별 선택 상태에 따른 캡처 제어로 해결했습니다. 진단·수정·실기기 검증을 단독으로 맡았습니다.</p>
+    <ul class="chips"><li>2026.11</li><li>프로파일링 · GPU 병목 진단 · 렌더링 최적화</li><li>Galaxy S20 (Android, Vulkan)</li><li>CSV Profiler</li><li>SceneCapture2D · Render Target</li><li>C++ · Blueprint</li></ul>
+    <div class="metrics">
+      <div class="metric"><strong>80 → 16.6ms</strong><span>성별 선택 이후 커스터마이징 화면 (60fps, vsync 상한)</span></div>
+      <div class="metric"><strong>80.3 → 19.4ms</strong><span>성별 선택 화면 (약 12fps → 52fps)</span></div>
+      <div class="metric"><strong>256 → 24MB</strong><span>Render Target 메모리 (약 90% 감소)</span></div>
+    </div>
+    <div class="pd">
+      <div><h4>문제</h4><p>커스터마이징 화면에 들어가면 Android·iOS에서만 프레임이 크게 떨어졌습니다. PC와 에디터(PIE)에서는 재현되지 않아 원인을 찾기 어려웠습니다.</p></div>
+      <div><h4>원인</h4><p>화면의 아바타는 3D가 아니라 UI에 띄운 캡처 이미지였습니다. 남/녀 캐릭터마다 SceneCapture가 2개씩, 모두 4개가 <b>매 프레임 장면을 다시 렌더링</b>했고, Render Target은 2048² RGBA32f(장당 64MB, 총 256MB)였습니다.</p></div>
+    </div>
+
+    <h4>분석 과정</h4>
+    <ol class="timeline">
+      <li><span>환경</span>Shipping 빌드로는 프로파일링이 어려워 Development APK를 따로 빌드하고, 실기기(Galaxy S20, Vulkan)에 adb로 콘솔 명령을 전달해 CSV Profiler로 프레임 데이터를 수집했습니다.</li>
+      <li><span>측정</span>프레임 80ms(약 12fps). RenderThread 80ms 중 64ms가 GPU 완료를 기다리는 대기(EventWait)여서 <b>GPU bound</b>로 판단했습니다.</li>
+      <li><span>A/B</span>화면 해상도 배율과 렌더링 요소(메시·반투명·그림자·후처리)를 하나씩 끄며 측정했지만 어느 것을 꺼도 개선이 없어, 메인 뷰는 원인이 아니라고 결론 내렸습니다.</li>
+      <li><span>기각</span>처음 의심했던 Texture Streaming 가설은 풀 사용량 측정으로 기각했습니다.</li>
+      <li><span>확정</span>아바타를 그리는 SceneCapture 4개를 끄면 16.6ms로 복귀해 원인으로 확정했습니다.</li>
+    </ol>
+
+    <h4>해결</h4>
+    <ul>
+      <li><b>Render Target 용도별 최적화</b> — 알파 마스크용 캡처는 RGBA8, 색상 캡처는 RGBA16f로 바꾸고 해상도를 2048 → 1024로 낮췄습니다. 색상 캡처까지 RGBA8로 바꾸면 모바일 Vulkan에서 검게 출력되는 문제를 실기기 검증에서 발견해, 색상 캡처만 RGBA16f로 유지했습니다.</li>
+      <li><b>성별 선택 상태에 따른 캡처 제어</b> — 성별을 고르면 화면에 보이지 않는 성별의 캡처를 멈추고, 성별 선택 화면으로 돌아오면 다시 켭니다. 로직은 C++ 위젯 함수로 구현해 Blueprint 성별 선택 흐름에 연결했습니다.</li>
+      <li>카메라 이동으로 멈춘 캡처가 다시 실행되지 않도록 매 프레임 캡처와 이동 기반 캡처를 함께 제어했습니다. 아바타가 idle 애니메이션을 재생하므로 보이는 캡처는 매 프레임 갱신을 유지했습니다.</li>
+    </ul>
+    <figure>
+      <script type="text/x-mermaid">
+stateDiagram-v2
+  [*] --> 성별선택
+  성별선택 --> 커스터마이징: 성별 선택
+  커스터마이징 --> 성별선택: 성별 선택 화면으로 복귀
+  note right of 성별선택
+    남/녀 캡처 4개 모두 활성
+  end note
+  note right of 커스터마이징
+    선택한 성별의 캡처 2개만 활성
+    (매 프레임 · 이동 기반 캡처 모두 정지)
+  end note
+      </script>
+      <figcaption>성별 선택 상태에 따른 캡처 제어</figcaption>
+    </figure>
+
+    <table>
+      <thead><tr><th>구분</th><th>Before</th><th>After</th></tr></thead>
+      <tbody>
+        <tr><td>성별 선택 화면</td><td>80.3ms (약 12fps)</td><td>19.4ms (약 52fps)</td></tr>
+        <tr><td>성별 선택 이후 커스터마이징 화면</td><td>80ms (약 12fps)</td><td>16.6ms (60fps, vsync 상한)</td></tr>
+        <tr><td>Render Target</td><td>2048² RGBA32f × 4 = 256MB</td><td>1024² RGBA8 × 2 + RGBA16f × 2 = 24MB</td></tr>
+      </tbody>
+    </table>
+    <p class="caption">Galaxy S20(Android, Vulkan) 실기기 실측. iOS 실기기 측정은 아직 하지 않았습니다.</p>
+    <p class="result">결과: Android 실기기 기준 커스터마이징 화면 80ms → 16.6ms(60fps), Render Target 메모리 256MB → 24MB(약 90% 감소).</p>
   </article>
 
   <article id="a12" class="item compact">
