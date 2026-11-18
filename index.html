@@ -23,6 +23,7 @@ details.group[open] > summary { border-bottom: 1px solid var(--line); margin-bot
 .group-overview ul { margin: 0; padding-left: 18px; font-size: 14.5px; color: var(--ink-2); }
 .group-overview li { margin: 3px 0; }
 main p code, main li code { white-space: normal; overflow-wrap: anywhere; }
+main td:first-child { white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -277,8 +278,8 @@ flowchart LR
 
   <article id="s3" class="item">
     <h3>상점 시스템 게임서버 전환 및 프레임드랍 최적화</h3>
-    <p class="tldr"><span><b>문제</b> 상점만 REST로 남았고, 전환 후 첫 오픈에 541ms 프레임 스파이크(동기 로딩 540ms)</span><span><b>판단</b> 가변 길이 단일 패킷으로 사양 확정, Insights로 Definition 동기 로딩을 병목으로 확정</span><span><b>결과</b> 2단계 비동기 프리로딩과 소프트 레퍼런스로 첫 오픈 프레임 최대 44.3ms (에디터 PIE)</span></p>
-    <p class="lead">상점 통신을 REST에서 게임서버 TCP 패킷으로 전환하고, 전환 후 발견한 541ms 프레임 스파이크를 Unreal Insights로 추적해 비동기 프리로딩으로 해소했습니다.</p>
+    <p class="tldr"><span><b>문제</b> 상점만 REST로 남았고, 전환 후 첫 오픈에 프레임 스파이크(개선 전 코드 재측정 248~303ms)</span><span><b>판단</b> 가변 길이 단일 패킷으로 사양 확정, Insights로 Definition 동기 로딩을 병목으로 확정</span><span><b>결과</b> 2단계 비동기 프리로딩과 소프트 레퍼런스로 첫 오픈 프레임 최대 44.3ms (에디터 PIE)</span></p>
+    <p class="lead">상점 통신을 REST에서 게임서버 TCP 패킷으로 전환하고, 전환 후 발견한 첫 오픈 프레임 스파이크(개선 전 코드 재측정 248~303ms)를 Unreal Insights로 추적해 비동기 프리로딩으로 해소했습니다.</p>
     <ul class="chips"><li>2026.04</li><li>프로토콜 재설계 · 패킷 파싱 · 트러블슈팅 · 프로파일링</li><li>TCP 바이너리 프로토콜</li><li>Unreal Insights</li><li>StreamableManager</li><li>TSoftClassPtr</li></ul>
 
     <h4>REST → 게임서버 TCP 패킷 전환</h4>
@@ -315,7 +316,7 @@ flowchart TB
 
     <h4>Unreal Insights 기반 프레임드랍 최적화</h4>
     <div class="pd">
-      <div><h4>문제</h4><p>상점을 처음 열 때 541ms 프레임 스파이크가 발생했습니다. Insights 기준 해당 프레임 541ms 중 동기 에셋 로딩이 540ms였습니다.</p></div>
+      <div><h4>문제</h4><p>상점을 처음 열 때 프레임 스파이크가 발생했습니다. 최초 발견 당시 작업 문서의 Insights 기록은 프레임 541ms 중 동기 에셋 로딩 540ms였습니다(원본 트레이스 미보존). 개선 전 코드로 다시 측정하면 첫 오픈 프레임 248~303ms 중 동기 로딩이 64~66회 실행되며 92~93%를 차지했습니다.</p></div>
       <div><h4>원인 (2계층)</h4><p>① 아이템 정의 조회가 메모리에 없는 Definition Blueprint를 게임 스레드에서 <b>동기 로딩</b>했습니다. ② 탈것 Definition이 스폰 Actor 클래스를 <code>TSubclassOf&lt;AActor&gt;</code> 하드 레퍼런스로 들고 있어 탈것 Blueprint·메시·머티리얼까지 <b>연쇄 로딩</b>됐습니다.</p></div>
     </div>
 
@@ -335,7 +336,7 @@ sequenceDiagram
     Note over AM: 하드 레퍼런스로<br/>탈것 에셋까지 연쇄 로딩
   end
   Act->>UI: 상점 열기
-  Note over Net,UI: 첫 오픈 프레임 541ms
+  Note over Net,UI: 첫 오픈 프레임 248~303ms (재측정)
         </script>
         <figcaption>Before — 동기 로딩으로 게임 스레드 블로킹</figcaption>
       </figure>
@@ -371,16 +372,17 @@ sequenceDiagram
     <table>
       <thead><tr><th>구분</th><th>상점 첫 오픈 직후</th><th>출처</th></tr></thead>
       <tbody>
-        <tr><td>Before</td><td>프레임 541ms, 동기 에셋 로딩 540ms</td><td>당시 작업 문서의 Unreal Insights 분석 기록 (2026-04-10, 에디터 PIE · 원본 트레이스 미보존)</td></tr>
-        <tr><td>After</td><td>프레임 44.3 / 41.2 / 43.7ms, 동기 로딩 호출 0회, 비동기 로딩이 여러 프레임에 나뉘어 처리</td><td>Unreal Insights 재측정</td></tr>
+        <tr><td>Before</td><td>프레임 303.2 / 248.3 / 293.8ms, 동기 로딩 64~66회(합계 228.5~283.1ms)</td><td>Unreal Insights 재측정 (2026-11-18, 3회, 개선 전 코드를 로컬 복원)</td></tr>
+        <tr><td>After</td><td>프레임 44.3 / 41.2 / 43.7ms, 동기 로딩 호출 0회, 비동기 로딩이 여러 프레임에 나뉘어 처리</td><td>Unreal Insights 재측정 (2026-10-13)</td></tr>
       </tbody>
     </table>
-    <p class="caption">두 측정 모두 에디터 PIE 환경이며, 패키지 빌드 기준 수치가 아닙니다.</p>
-    <p class="result">결과: 첫 오픈 프레임 541ms(당시 작업 문서 기록) → 최대 44.3ms(Insights 재측정). 장착 시점의 클래스 해석은 실제 사용 시점이라 의도적으로 동기 처리를 남겼습니다.</p>
+    <p class="caption">두 측정 모두 에디터 PIE 환경이며, 패키지 빌드 기준 수치가 아닙니다. Before는 현재 코드에서 개선 커밋만 되돌려 측정했고 After는 2026-10-13 코드 기준이라, 같은 코드 기준의 전후 비교는 아닙니다.</p>
+    <p class="result">결과: 첫 오픈 프레임 248~303ms(개선 전 코드 재측정 3회) → 최대 44.3ms(Insights 재측정). 장착 시점의 클래스 해석은 실제 사용 시점이라 의도적으로 동기 처리를 남겼습니다.</p>
 
     <div class="media single">
       <figure class="video"><video src="assets/captures/synthoria/store-first-open.mp4" poster="assets/captures/synthoria/store-first-open.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>개선 후 상점 첫 오픈과 탭 전환 — 재화·가격은 가림 처리</figcaption></figure>
     </div>
+    <figure class="shot"><a href="assets/captures/synthoria/insights-before-full.png" target="_blank" rel="noopener"><img src="assets/captures/synthoria/insights-before.png" alt="" loading="lazy"></a><figcaption>Unreal Insights — 개선 전 코드 재측정 1회차, 첫 오픈 프레임 303.2ms 안의 동기 로딩 64회(283.1ms)와 탈것 BP 연쇄 로딩 (클릭하면 원본 크기)</figcaption></figure>
     <figure class="shot"><a href="assets/captures/synthoria/insights-after-full.png" target="_blank" rel="noopener"><img src="assets/captures/synthoria/insights-after.png" alt="" loading="lazy"></a><figcaption>Unreal Insights — 첫 오픈 직후 프레임과 ProcessAsyncLoading 구간 (클릭하면 원본 크기)</figcaption></figure>
     <figure class="shot"><a href="assets/captures/synthoria/refviewer-after-full.png" target="_blank" rel="noopener"><img src="assets/captures/synthoria/refviewer-after.png" alt="" loading="lazy"></a><figcaption>Reference Viewer — 탈것 Definition에서 탈것 BP로 향하는 분홍 선이 소프트 레퍼런스 (클릭하면 원본 크기)</figcaption></figure>
   </article>
