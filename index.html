@@ -98,7 +98,7 @@ main td:first-child { white-space: nowrap; }
 <section id="summary" class="block">
   <h2>핵심 역량</h2>
   <ul class="summary-list">
-    <li>UE 5.6 라이브 서비스 메타버스 <b>Synthoria</b>에서 미니골프 미니게임(18개 스테이지)과 상점 기능을 개발하고, 상호작용·상점 시스템의 레거시 구조를 개선했습니다.</li>
+    <li>UE 5.6 라이브 서비스 메타버스 <b>Synthoria</b>에서 외주에서 미완성으로 넘어온 미니골프(18개 스테이지)를 다시 구현해 완성하고 상점 기능을 개발했으며, 상호작용·상점 시스템의 레거시 구조를 개선했습니다.</li>
     <li>같은 회사 신규 프로젝트 <b>아산모아 메타버스</b>에서 클라이언트를 단독으로 맡아 서버 권위형 퀘스트 전환(실서버 왕복 19건 확인), 월드 진입 흐름과 관광 지도·미니맵·랭킹·보물찾기 같은 지역 콘텐츠, 모바일 커스터마이징 화면 GPU 병목 개선(Galaxy S20 실측 80ms에서 16.6ms)을 진행했습니다. 정식 출시 전 프로젝트입니다(Android 내부 테스트, iOS TestFlight).</li>
     <li>패킷 구조·에러 코드·브로드캐스트 범위를 서버 개발자와 문서로 먼저 합의하고, 서버 생성물이 확정본인 계약은 제안서로 전달합니다.</li>
     <li>Unreal Insights로 병목을 계측해 원인을 좁히고, 상점 첫 오픈 프레임의 동기 로딩을 비동기 프리로딩과 소프트 레퍼런스로 없앤 경험이 있습니다.</li>
@@ -139,7 +139,7 @@ main td:first-child { white-space: nowrap; }
         <h4>리팩토링 및 재구현</h4>
         <ul>
           <li>Stage Blueprint에 Child Actor Component로 고정돼 있던 오브젝트 배치를 DataTable 기반 스폰 구조로 전환하고, 하드코딩된 좌표·회전값과 타입 오류를 정리했습니다.</li>
-          <li>공용 미니게임 FSM 위의 라운드 진행·강제 종료·컨티뉴 흐름 구현과 물리 기반 조작, UI, 18개 스테이지 정리까지 단독 수행했습니다.</li>
+          <li>공용 미니게임 FSM 위의 라운드 진행·강제 종료·컨티뉴 흐름 구현과 물리 샷 로직 이식, UI, 18개 스테이지 정리까지 단독 수행했습니다.</li>
         </ul>
       </div>
     </div>
@@ -173,8 +173,9 @@ flowchart LR
         </ul>
         <h4>입력·샷 제어</h4>
         <ul>
-          <li>Enhanced Input 기반 3축 제어(회전 / 각도 / 파워)를 구현했습니다.</li>
-          <li>AddImpulse 기반 물리 샷과 궤적 시각화(Prediction Line)를 구현했습니다.</li>
+          <li>단일 Enhanced Input Touch 액션에서 샷 차지, 카메라 회전, 핀치 줌의 3가지 제스처로 분기했습니다.</li>
+          <li>인수 코드의 AddImpulse 물리 샷과 궤적 표시 로직은 메인 모듈로 이식해 유지했습니다.</li>
+          <li>원본이 매 프레임 폴링하던 볼 정지 판정을 물리 Sleep 이벤트 기반으로 바꾸고 볼의 Tick을 껐습니다.</li>
         </ul>
       </div>
       <div>
@@ -278,8 +279,8 @@ flowchart LR
 
   <article id="s3" class="item">
     <h3>상점 시스템 게임서버 전환 및 프레임드랍 최적화</h3>
-    <p class="tldr"><span><b>문제</b> 상점만 REST로 남았고, 전환 후 첫 오픈에 프레임 스파이크(3차 적용 전 코드 재측정 248~303ms)</span><span><b>판단</b> 가변 길이 단일 패킷으로 사양 확정, Insights로 Definition 동기 로딩을 병목으로 확정</span><span><b>결과</b> 2단계 비동기 프리로딩과 소프트 레퍼런스로 첫 오픈 프레임 최대 44.3ms (에디터 PIE)</span></p>
-    <p class="lead">상점 통신을 REST에서 게임서버 TCP 패킷으로 전환하고, 전환 후 발견한 첫 오픈 프레임 스파이크(3차 적용 전 코드 재측정 248~303ms)를 Unreal Insights로 추적해 비동기 프리로딩으로 해소했습니다.</p>
+    <p class="tldr"><span><b>문제</b> 상점만 REST로 남았고, 전환 후 첫 오픈에 프레임 스파이크(최종 수정 전 코드 재측정 248~303ms)</span><span><b>판단</b> 가변 길이 단일 패킷으로 사양 확정, Insights로 Definition 동기 로딩을 병목으로 확정</span><span><b>결과</b> 2단계 비동기 프리로딩과 소프트 레퍼런스로 첫 오픈 프레임 최대 44.3ms (에디터 PIE)</span></p>
+    <p class="lead">상점 통신을 REST에서 게임서버 TCP 패킷으로 전환하고, 전환 후 발견한 첫 오픈 프레임 스파이크(최종 수정 전 코드 재측정 248~303ms)를 Unreal Insights로 추적해 비동기 프리로딩으로 해소했습니다.</p>
     <ul class="chips"><li>2026.04</li><li>프로토콜 재설계 · 패킷 파싱 · 트러블슈팅 · 프로파일링</li><li>TCP 바이너리 프로토콜</li><li>Unreal Insights</li><li>StreamableManager</li><li>TSoftClassPtr</li></ul>
 
     <h4>REST → 게임서버 TCP 패킷 전환</h4>
@@ -316,7 +317,7 @@ flowchart TB
 
     <h4>Unreal Insights 기반 프레임드랍 최적화</h4>
     <div class="pd">
-      <div><h4>문제</h4><p>상점을 처음 열 때 프레임 스파이크가 발생했습니다. 최초 발견 당시 작업 문서의 Insights 기록은 프레임 541ms 중 동기 에셋 로딩 540ms였습니다(원본 트레이스 미보존). 3차 적용 전 코드로 다시 측정하면 첫 오픈 프레임 248~303ms 중 동기 로딩이 64~66회 실행되며 92~93%를 차지했습니다.</p></div>
+      <div><h4>문제</h4><p>상점을 처음 열 때 프레임 스파이크가 발생했습니다. 최초 발견 당시 작업 문서의 Insights 기록은 프레임 541ms 중 동기 에셋 로딩 540ms였습니다(원본 트레이스 미보존). 최종 수정(3차 프리로딩과 소프트 레퍼런스)을 되돌린 코드로 다시 측정하면 첫 오픈 프레임 248~303ms 중 동기 로딩이 64~66회 실행되며 92~93%를 차지했습니다.</p></div>
       <div><h4>원인 (2계층)</h4><p>① 아이템 정의 조회가 메모리에 없는 Definition Blueprint를 게임 스레드에서 <b>동기 로딩</b>했습니다. ② 탈것 Definition이 스폰 Actor 클래스를 <code>TSubclassOf&lt;AActor&gt;</code> 하드 레퍼런스로 들고 있어 탈것 Blueprint·메시·머티리얼까지 <b>연쇄 로딩</b>됐습니다.</p></div>
     </div>
 
@@ -377,12 +378,12 @@ sequenceDiagram
       </tbody>
     </table>
     <p class="caption">두 측정 모두 에디터 PIE 환경이며, 패키지 빌드 기준 수치가 아닙니다. Before는 현재 코드에서 3차 프리로딩과 소프트 레퍼런스 커밋만 되돌려 측정했고(1·2차 시도인 썸네일 프리로딩과 완료 대기는 적용된 상태), After는 2026-10-13 코드 기준이라 같은 코드 기준의 전후 비교는 아닙니다.</p>
-    <p class="result">결과: 첫 오픈 프레임 248~303ms(3차 적용 전 코드 재측정 3회) → 최대 44.3ms(Insights 재측정). 장착 시점의 클래스 해석은 실제 사용 시점이라 의도적으로 동기 처리를 남겼습니다.</p>
+    <p class="result">결과: 첫 오픈 프레임 248~303ms(최종 수정 전 코드 재측정 3회) → 최대 44.3ms(Insights 재측정). 장착 시점의 클래스 해석은 실제 사용 시점이라 의도적으로 동기 처리를 남겼습니다.</p>
 
     <div class="media single">
       <figure class="video"><video src="assets/captures/synthoria/store-first-open.mp4" poster="assets/captures/synthoria/store-first-open.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>개선 후 상점 첫 오픈과 탭 전환 — 재화·가격은 가림 처리</figcaption></figure>
     </div>
-    <figure class="shot"><a href="assets/captures/synthoria/insights-before-full.png" target="_blank" rel="noopener"><img src="assets/captures/synthoria/insights-before.png" alt="" loading="lazy"></a><figcaption>Unreal Insights — 3차 적용 전 코드 재측정 1회차, 첫 오픈 프레임 303.2ms 안의 동기 로딩 64회(283.1ms)와 탈것 BP 연쇄 로딩 (클릭하면 원본 크기)</figcaption></figure>
+    <figure class="shot"><a href="assets/captures/synthoria/insights-before-full.png" target="_blank" rel="noopener"><img src="assets/captures/synthoria/insights-before.png" alt="" loading="lazy"></a><figcaption>Unreal Insights — 최종 수정 전 코드 재측정 1회차, 첫 오픈 프레임 303.2ms 안의 동기 로딩 64회(283.1ms)와 탈것 BP 연쇄 로딩 (클릭하면 원본 크기)</figcaption></figure>
     <figure class="shot"><a href="assets/captures/synthoria/insights-after-full.png" target="_blank" rel="noopener"><img src="assets/captures/synthoria/insights-after.png" alt="" loading="lazy"></a><figcaption>Unreal Insights — 첫 오픈 직후 프레임과 ProcessAsyncLoading 구간 (클릭하면 원본 크기)</figcaption></figure>
     <figure class="shot"><a href="assets/captures/synthoria/refviewer-after-full.png" target="_blank" rel="noopener"><img src="assets/captures/synthoria/refviewer-after.png" alt="" loading="lazy"></a><figcaption>Reference Viewer — 탈것 Definition에서 탈것 BP로 향하는 분홍 선이 소프트 레퍼런스 (클릭하면 원본 크기)</figcaption></figure>
   </article>
