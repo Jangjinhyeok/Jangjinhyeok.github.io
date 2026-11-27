@@ -455,7 +455,7 @@ sequenceDiagram
       <li><a href="#a4">랭킹 응답 처리</a> — 요청 ID 없는 응답을 지표별 대기 상태 게이트로 처리, 실서버 검증</li>
       <li><a href="#a5">관광 지도</a> — DataTable 행 이름을 식별자로 써 핀 표시 문제 해결, 전체 지도·관광지 상세·방문 보상 팝업, 안내판 24개 일괄 연결</li>
       <li><a href="#a6">커스터마이징 프레임 개선</a> — SceneCapture 4개를 원인으로 특정, Galaxy S20 실측 80ms에서 16.6ms</li>
-      <li><a href="#a14">가상순찰</a> — 신규 패킷 없이 기존 이동 패킷으로 동기화, 순찰 정보를 입장 응답으로 받도록 서버와 합의(실서버 순찰 계정 검증은 대기)</li>
+      <li><a href="#a14">가상순찰</a> — 신규 패킷 없이 기존 이동 패킷으로 동기화, 순찰 정보를 입장 응답으로 받도록 서버와 합의(실서버 순찰 계정 접속 확인, 다른 유저 화면 표시는 미확인)</li>
     </ul>
   </div>
   <details class="group" id="content" open>
@@ -689,9 +689,12 @@ stateDiagram-v2
 
   <article id="a14" class="item">
     <h3>가상순찰 — 신규 패킷 없이 기존 이동 패킷으로 동기화한 순찰 시스템</h3>
-    <p class="tldr"><span><b>문제</b> 순찰 캐릭터의 이동을 다른 유저에게 어떻게 전달할지, 순찰 계정임을 언제 알릴지 정해야 함</span><span><b>판단</b> 신규 패킷 대신 기존 이동 패킷을 재사용하고, 순찰 여부·담당 구역·캐릭터 종류는 입장 응답에 싣기로 서버와 합의</span><span><b>결과</b> 서버 없이 순찰 코어를 먼저 구현한 뒤 연동, 에디터 플레이 실측 경로 이탈 최대 7cm (실서버 순찰 계정 검증은 대기)</span></p>
+    <p class="tldr"><span><b>문제</b> 순찰 캐릭터의 이동을 다른 유저에게 어떻게 전달할지, 순찰 계정임을 언제 알릴지 정해야 함</span><span><b>판단</b> 신규 패킷 대신 기존 이동 패킷을 재사용하고, 순찰 여부·담당 구역·캐릭터 종류는 입장 응답에 싣기로 서버와 합의</span><span><b>결과</b> 서버 없이 순찰 코어를 먼저 구현한 뒤 연동, 에디터 플레이 실측 경로 이탈 최대 7cm (실서버 순찰 계정 접속 확인, 다른 유저 화면 표시는 미확인)</span></p>
     <p class="lead">순찰 계정으로 로그인하면 일반 아바타 대신 마스코트 캐릭터로 담당 구역에 들어가 지정 경로를 반복해서 걷는 기능을 새로 만들었습니다. 다른 유저 화면에도 같은 마스코트가 보이며, 장시간 무인 실행을 전제로 설계했습니다.</p>
     <ul class="chips"><li>2026.11</li><li>C++</li><li>UMG</li><li>서버 계약 조율</li><li>경로 추종</li><li>UE Automation</li></ul>
+    <div class="media single">
+      <figure class="video"><video src="assets/captures/asanmoa/patrol-start-stop.mp4" poster="assets/captures/asanmoa/patrol-start-stop.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>순찰 계정 화면 — 순찰 시작 → 마스코트가 경로를 따라 걷기 → 순찰 중지 (Windows 빌드, 실제 서버 접속)</figcaption></figure>
+    </div>
     <div class="pd">
       <div><h4>문제</h4><p>순찰 캐릭터의 이동을 다른 유저에게 어떻게 전달할지 정해야 했습니다. 순찰 계정임을 로그인 직후 통지하는 초안도 성립하지 않았습니다. 계정 식별자가 로그인 요청이 아니라 그 뒤의 입장 요청에 처음 실리기 때문입니다.</p></div>
       <div><h4>판단</h4><p>순찰 클라이언트가 경로를 걷고 일반 캐릭터와 같은 주기로 위치를 보내는 기존 이동 패킷 재사용을 골랐습니다. 순찰 여부·담당 구역·캐릭터 종류는 입장 응답에 싣는 것으로 서버 담당자와 맞췄습니다.</p></div>
@@ -744,7 +747,7 @@ stateDiagram-v2
       <li>두 구역에 순찰 경로와 전용 시작 지점을 배치했습니다. 기획 동선 중 실제 레벨에서 들어갈 수 없는 곳(담으로 막힌 구역, 건널 수 없는 다리, 높은 단)은 바깥으로 도는 경로로 바꾸고 기획·아트 확인 사항으로 남겼습니다.</li>
       <li>아트 브랜치가 같은 레벨을 따로 수정해 충돌했을 때는 아트 쪽 버전을 채택하고, 미리 뽑아 둔 순찰 경로 210개 지점과 시작 지점을 오차 없이 다시 배치했습니다. 같은 일이 생기면 다시 쓸 수 있게 추출본을 남겼습니다.</li>
     </ul>
-    <p class="caption">수치는 모두 에디터 플레이 실측이며, 경로 이탈은 8배속으로 측정했습니다. 빌드·자동 테스트·에디터 플레이까지 확인했고, 실제 서버의 순찰 계정으로 접속한 검증은 아직 하지 못했습니다. 테스트 접속에서 서버가 해당 계정을 순찰 계정으로 보내지 않았고, 클라이언트가 받은 값대로 동작했음을 로그로 확인해 서버팀에 계정 설정 확인을 요청한 상태입니다.</p>
+    <p class="caption">경로 이탈과 카메라 수치는 에디터 플레이 실측이며, 경로 이탈은 8배속으로 측정했습니다. 빌드·자동 테스트·에디터 플레이에 더해, Windows 빌드에서 실제 서버의 순찰 계정으로 접속해 마스코트 진입과 순찰 시작·중지·재개를 확인했습니다. 다른 유저 화면에 순찰 마스코트가 보이는지는 아직 확인하지 못했습니다.</p>
   </article>
   </details>
 
@@ -1027,6 +1030,7 @@ flowchart LR
       <li>레벨을 플랫폼별로 2개 운용하는 안은 배치 변경을 두 번 해야 해서, 색감만 옮기는 안과 함께 버렸습니다.</li>
       <li>조명 굽기는 약 1시간 40분, 조명 맵 6,444개였습니다. 에디터의 같은 시점에서 분리 전과 분리 후 모바일 화면의 평균 픽셀 차이는 약 2/255였습니다.</li>
     </ul>
+    <figure class="shot narrow"><img src="assets/captures/asanmoa/oasis-lighting-windows.jpg" alt="" loading="lazy"><figcaption>오아시스 스팟의 Windows 빌드 화면 — PC용 조명 서브레벨이 로드된 상태 (닉네임 가림). 모바일 화면과의 비교는 아닙니다.</figcaption></figure>
     <p class="caption">에디터 비교, 3플랫폼 풀빌드, Windows 청크 크기 비교까지 확인해 릴리스에 반영했습니다. 모바일 실기기의 화면·프레임 확인은 아직 하지 않았습니다. 레벨과 라이팅 원본은 아트 담당 작업입니다.</p>
   </article>
 
@@ -1037,7 +1041,7 @@ flowchart LR
       <li><b>스마트폴 현황(Mock)</b> — 외부 API가 아직 없어 클라이언트 Mock 데이터로 시설 현황 UI를 먼저 완성하고, 실연동 때 데이터 소스만 바꾸도록 분리했습니다.</li>
       <li><b>신규 회원 튜토리얼</b> — 입장 패킷의 튜토리얼 상태로 신규 회원을 판별해 첫 진입 튜토리얼(표지 → 12쪽 이미지 가이드 → 완료 팝업)을 월드맵에서 한 번 표시합니다. 이미지는 REST 목록으로 받아 기존 안내 팝업을 재사용했고, 완료 패킷은 실패·무응답에 대비해 최초 전송을 포함해 최대 3회까지 보내도록 구현했습니다.</li>
       <li><b>튜토리얼 이미지 메모리</b> — 튜토리얼에서 이전/다음을 반복하면 GPU 메모리 부족으로 앱이 종료됐습니다. 서버 이미지가 약 4천만 화소라 텍스처 1장이 CPU와 GPU에 각각 약 154MB(화소 수 기준 계산값)를 썼고, 화면에서 벗어난 텍스처가 다음 가비지 컬렉션까지 남아 쌓였습니다. 안내 팝업 이미지는 긴 변 2048px 이하로 줄여 텍스처를 만들고, 현재 쪽 앞뒤 1쪽 밖의 텍스처는 바로 해제하며, 받는 도중 범위를 벗어난 쪽은 디코딩하지 않게 했습니다. 16-bit PNG 버퍼 넘침, 흑백 이미지 깨짐, 모바일 JPEG의 빨강·파랑 뒤바뀜도 함께 고쳤습니다. 수정 후 실기기 재현 확인은 아직 하지 않았습니다.</li>
-      <li><b>이미지·영상 빌보드</b> — 광장 빌보드 16개에 관리자 페이지에서 지정한 이미지를 표시하고, 해제되면 원래 모습으로 되돌립니다. 슬롯 상태를 서브시스템이 보관해 패킷 수신과 빌보드 생성 순서에 상관없이 같은 결과가 나오게 했고, 슬롯 키 규약은 문서로 서버팀과 합의했습니다. 영상 빌보드는 초기 정리 때 지운 영상 플레이어 위젯 코드를 되살려 새 백엔드의 영상 API로 옮겼습니다. 빌드와 자동 테스트까지 확인했고 실서버 연동 확인은 아직입니다.</li>
+      <li><b>이미지·영상 빌보드</b> — 광장 빌보드 16개에 관리자 페이지에서 지정한 이미지를 표시하고, 해제되면 원래 모습으로 되돌립니다. 슬롯 상태를 서브시스템이 보관해 패킷 수신과 빌보드 생성 순서에 상관없이 같은 결과가 나오게 했고, 슬롯 키 규약은 문서로 서버팀과 합의했습니다. 영상 빌보드는 초기 정리 때 지운 영상 플레이어 위젯 코드를 되살려 새 백엔드의 영상 API로 옮겼습니다. 이미지 빌보드는 Windows 빌드에서 서버가 보낸 이미지 16개가 표시되는 것을 확인했고, 영상 빌보드의 실서버 연동 확인은 아직입니다.</li>
       <li><b>즐겨찾기 TCP 연동</b> — 관광지 즐겨찾기 조회·등록·해제를 게임 서버 TCP로 연동하고 회귀 테스트를 추가했습니다(실서버 검증).</li>
       <li><b>FCM 푸시</b> — Android 푸시 수신 플러그인과, 개발 메뉴에서 자기 기기로 보내 보는 테스트 도구를 만들었습니다. 테스트 토큰은 게임 인증 토큰과 분리했습니다. iOS는 수신 구현과 빌드 설정(푸시·서명)까지 진행했습니다.</li>
       <li><b>Android 요구사항 대응</b> — 인앱결제 제거에 맞춰 Android 결제 SDK 의존성을 제외하고 target SDK 36 요구사항에 대응했습니다.</li>
@@ -1045,6 +1049,7 @@ flowchart LR
     </ul>
     <div class="grid2 media">
       <figure class="video"><video src="assets/captures/asanmoa/tutorial.mp4" poster="assets/captures/asanmoa/tutorial.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>튜토리얼 표지 → 12쪽 가이드 → 완료 팝업 → 월드맵 (PC 빌드, 닉네임·브랜드 표기 가림)</figcaption></figure>
+      <figure class="video"><video src="assets/captures/asanmoa/billboard-plaza.mp4" poster="assets/captures/asanmoa/billboard-plaza.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>창조존 광장 — 서버가 지정한 이미지가 표시된 빌보드 (Windows 빌드, 닉네임 가림)</figcaption></figure>
       <figure class="video"><video src="assets/captures/asanmoa/favorite-toggle.mp4" poster="assets/captures/asanmoa/favorite-toggle.jpg" autoplay muted loop playsinline preload="metadata"></video><figcaption>관광지 즐겨찾기 해제 → 재등록 (게임 서버 TCP)</figcaption></figure>
     </div>
   </article>
